@@ -10,11 +10,87 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Ingredients {
+    id       String @id @default(uuid())
+    name     String @unique
+    calories Float
+    protein  Float
+    carbs    Float
 
-    @@index([name])
+    recipes RecipeToIngredients[]
+    meals   MealToIngredients[]
+
+    @@map("ingredients")
+}
+
+model Recipe {
+    id   String @id @default(uuid())
+    name String
+
+    ingredients RecipeToIngredients[]
+    meals       MealToRecipe[]
+
+    @@map("recipes")
+}
+
+model Meal {
+    id       String    @id @default(uuid())
+    mealTime DateTime?
+    type     MealType
+
+    recipes     MealToRecipe[]
+    ingredients MealToIngredients[]
+    menu        Menu?               @relation(fields: [menuId], references: [id])
+    menuId      String?
+
+    @@map("meals")
+}
+
+model Menu {
+    id   String   @id @default(uuid())
+    date DateTime
+
+    meals Meal[]
+
+    @@map("menus")
+}
+
+model RecipeToIngredients {
+    recipe       Recipe      @relation(fields: [recipeId], references: [id])
+    recipeId     String
+    ingredient   Ingredients @relation(fields: [ingredientId], references: [id])
+    ingredientId String
+    quantity     Float
+
+    @@id([recipeId, ingredientId])
+    @@map("recipe_ingredients")
+}
+
+model MealToRecipe {
+    meal     Meal   @relation(fields: [mealId], references: [id])
+    mealId   String
+    recipe   Recipe @relation(fields: [recipeId], references: [id])
+    recipeId String
+    servings Float
+
+    @@id([mealId, recipeId])
+    @@map("meal_recipes")
+}
+
+model MealToIngredients {
+    meal         Meal        @relation(fields: [mealId], references: [id])
+    mealId       String
+    ingredient   Ingredients @relation(fields: [ingredientId], references: [id])
+    ingredientId String
+    quantity     Float
+
+    @@id([mealId, ingredientId])
+    @@map("meal_ingredients")
+}
+
+enum MealType {
+    breakfast
+    lunch
+    dinner
+    snack
 }
