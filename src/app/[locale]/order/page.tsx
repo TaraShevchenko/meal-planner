@@ -1,4 +1,4 @@
-import { Layout } from 'module/core/Layout'
+import { Layout } from 'core/Layout'
 
 import { RoutesPaths } from 'shared/routes'
 

@@ -41,8 +41,6 @@ export const buttonVariants = {
     },
 }
 
-// export const buttonDefaultVariants =
-
 export const buttonCva = cva(buttonBase, {
     variants: buttonVariants,
     defaultVariants: {

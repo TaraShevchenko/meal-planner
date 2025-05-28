@@ -28,6 +28,7 @@
         "paths": {
             "*": ["./src/*"],
             "app": ["./src/app/*"],
+            "core": ["src/core/*"],
             "module": ["./src/module/*"],
             "shared": ["./src/shared/*"]
         }

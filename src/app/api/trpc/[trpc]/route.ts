@@ -5,7 +5,6 @@ import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
 
 import { appRouter } from 'shared/lib/trpc/root'
 import { createTRPCContext } from 'shared/lib/trpc/trpc'
-import { env } from 'shared/utils/env'
 
 const createContext = async (req: NextRequest) => {
     return createTRPCContext({
@@ -24,7 +23,7 @@ const handler = (req: NextRequest) =>
                 console.log('Redirected', NextResponse)
                 return NextResponse.redirect('/login')
             }
-            if (env.NODE_ENV === 'development') {
+            if (process.env.NODE_ENV === 'development') {
                 console.error(`❌ tRPC failed: ${error.message}`)
             }
         },

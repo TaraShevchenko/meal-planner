@@ -1,9 +1,0 @@
----
-description: 
-globs: 
-alwaysApply: true
----
-1. Don't write comments in code, only explain in chat.
-2. Always ask if it is necessary before committing changes.
-3 Any action that changes the local or remote state of the repository should only be done after asking if it is necessary.
-4. Do not run dev server (npm run dev) if this request is not in the prompt. (As a rule it is always running)
