@@ -4,8 +4,13 @@ import { useState } from 'react'
 
 import { type MealType as PrismaMealType } from '@prisma/client'
 
+import { CardContent, CardHeader } from 'shared/ui/Card'
+import { Card } from 'shared/ui/Card'
+import { PieChart } from 'shared/ui/PieChart'
+import { Text } from 'shared/ui/Text'
+
 import { useMenuByDate, usePlanner } from '../../model/hooks'
-import { type MealWithDetails } from '../../model/types'
+import { type MealWithDetails, type MenuWithMeals } from '../../model/types'
 import { type MealItemData, MealSection } from './ui'
 
 interface MealTypesListProps {
@@ -60,9 +65,31 @@ function calculateMealNutrition(meal: Partial<MealWithDetails>) {
     }
 }
 
+function calculateDayNutrition(menu: MenuWithMeals | null) {
+    let totalCalories = 0
+    let totalProtein = 0
+    let totalFat = 0
+    let totalCarbs = 0
+
+    menu?.meals?.forEach((meal) => {
+        const mealNutrition = calculateMealNutrition(meal)
+        totalCalories += mealNutrition.calories
+        totalProtein += mealNutrition.protein
+        totalFat += mealNutrition.fat
+        totalCarbs += mealNutrition.carbs
+    })
+
+    return {
+        calories: Math.round(totalCalories),
+        protein: Math.round(totalProtein * 10) / 10,
+        fat: Math.round(totalFat * 10) / 10,
+        carbs: Math.round(totalCarbs * 10) / 10,
+    }
+}
+
 export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps) {
     const [selectedMeal, setSelectedMeal] = useState<string>('breakfast')
-    const { menu, isLoading } = useMenuByDate(selectedDate)
+    const { menu } = useMenuByDate(selectedDate)
     const planner = usePlanner()
 
     const getMealData = (mealType: PrismaMealType) => {
@@ -170,33 +197,33 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
         onMealSelect(mealId)
     }
 
-    if (isLoading) {
-        return (
-            <div className="space-y-4">
-                {mealTypes.map((mealType) => (
-                    <div key={mealType.type} className="animate-pulse">
-                        <div className="h-16 rounded-lg bg-gray-200"></div>
-                    </div>
-                ))}
-            </div>
-        )
-    }
+    const dayNutrition = calculateDayNutrition(menu)
 
     return (
-        <div className="space-y-4">
-            {getUpdatedMeals().map((meal) => (
-                <MealSection
-                    key={meal.type}
-                    meal={meal}
-                    items={getMealItems(meal.type)}
-                    isSelected={selectedMeal === meal.type}
-                    onSelect={() => handleSelectMeal(meal.type)}
-                    onEditItem={handleEditItem}
-                    onDeleteItem={handleDeleteItem}
-                    onCompleteMeal={handleCompleteMeal}
-                    mealCompletedTime={getMealCompletedTime(meal.type) ?? null}
-                />
-            ))}
+        <div className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <Text text="Day Nutrition" variant="title" />
+                </CardHeader>
+                <CardContent>
+                    <PieChart data={dayNutrition} size={180} />
+                </CardContent>
+            </Card>
+            <div className="space-y-4">
+                {getUpdatedMeals().map((meal) => (
+                    <MealSection
+                        key={meal.type}
+                        meal={meal}
+                        items={getMealItems(meal.type)}
+                        isSelected={selectedMeal === meal.type}
+                        onSelect={() => handleSelectMeal(meal.type)}
+                        onEditItem={handleEditItem}
+                        onDeleteItem={handleDeleteItem}
+                        onCompleteMeal={handleCompleteMeal}
+                        mealCompletedTime={getMealCompletedTime(meal.type) ?? null}
+                    />
+                ))}
+            </div>
         </div>
     )
 }
