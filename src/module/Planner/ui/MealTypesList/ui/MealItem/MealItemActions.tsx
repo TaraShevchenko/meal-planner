@@ -1,4 +1,4 @@
-import { Check, Edit2, MoreVertical, Trash2 } from 'lucide-react'
+import { Check, Edit2, MoreVertical, Trash2, X } from 'lucide-react'
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'shared/ui/Dropdown'
 
@@ -19,7 +19,7 @@ export function MealItemActions({ item, onEdit, onDelete, onComplete }: MealItem
                 <DropdownMenuItem onClick={onEdit} icon={Edit2} text="Edit" />
                 <DropdownMenuItem
                     onClick={onComplete}
-                    icon={Check}
+                    icon={item.completed ? X : Check}
                     text={item.completed ? 'Mark as incomplete' : 'Mark as complete'}
                 />
                 <DropdownMenuItem onClick={onDelete} icon={Trash2} text="Delete" />

@@ -6,6 +6,7 @@ import { Badge } from 'shared/ui/Badge'
 import { Button } from 'shared/ui/Button'
 import { Input } from 'shared/ui/Input'
 import { Text } from 'shared/ui/Text'
+import { num } from 'shared/utils/num'
 
 import { MealItemActions } from './MealItemActions'
 
@@ -64,7 +65,7 @@ export function MealItem({ item, onEdit, onDelete, onComplete }: MealItemProps) 
                 </div>
                 <Text
                     className="mt-1"
-                    text={`${item.calories} kcal • P: ${item.protein}g • F: ${item.fat}g • C: ${item.carbs}g`}
+                    text={`${num(item.calories)} kcal • P: ${num(item.protein)}g • F: ${num(item.fat)}g • C: ${num(item.carbs)}g`}
                     variant="muted"
                 />
             </div>
@@ -87,7 +88,7 @@ export function MealItem({ item, onEdit, onDelete, onComplete }: MealItemProps) 
                     </>
                 ) : (
                     <>
-                        <Text text={`${item.amount} ${item.unit}`} />
+                        <Text text={`${num(item.amount)} ${item.unit}`} />
                         {item.completed && <Check className="h-4 w-4 text-green-500" />}
                         <MealItemActions
                             item={item}

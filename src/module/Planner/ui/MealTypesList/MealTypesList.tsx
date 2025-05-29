@@ -163,11 +163,6 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
         })
     }
 
-    const handleAddMeal = (mealType: string) => {
-        setSelectedMeal(mealType)
-        onMealSelect(mealType)
-    }
-
     const handleSelectMeal = (mealId: string) => {
         setSelectedMeal(mealId)
         onMealSelect(mealId)
@@ -197,7 +192,6 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
                     onEditItem={handleEditItem}
                     onDeleteItem={handleDeleteItem}
                     onCompleteItem={handleCompleteItem}
-                    onAddMeal={() => handleAddMeal(mealType.id)}
                 />
             ))}
         </div>

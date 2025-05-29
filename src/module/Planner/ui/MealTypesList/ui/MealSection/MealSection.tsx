@@ -1,6 +1,3 @@
-import { ChevronUp, Plus } from 'lucide-react'
-
-import { Button } from 'shared/ui/Button'
 import { Card, CardContent, CardHeader, CardTitle } from 'shared/ui/Card'
 import { Text } from 'shared/ui/Text'
 
@@ -22,7 +19,6 @@ interface MealSectionProps {
     onEditItem: (id: string, amount: number) => void
     onDeleteItem: (id: string) => void
     onCompleteItem: (id: string) => void
-    onAddMeal: () => void
 }
 
 export function MealSection({
@@ -33,7 +29,6 @@ export function MealSection({
     onEditItem,
     onDeleteItem,
     onCompleteItem,
-    onAddMeal,
 }: MealSectionProps) {
     const calculateTotals = (items: MealItemData[]) => {
         return items.reduce(
@@ -62,7 +57,6 @@ export function MealSection({
                     </div>
                     <div className="flex items-center gap-2">
                         <Text variant="sm" text={`${items.length} items`} />
-                        <ChevronUp className="h-4 w-4 text-muted-foreground" />
                     </div>
                 </div>
             </CardHeader>
@@ -85,18 +79,6 @@ export function MealSection({
                 ) : (
                     <div className="mb-4 text-center text-muted-foreground">No meals added yet</div>
                 )}
-
-                <Button
-                    variant="outline"
-                    className="mt-4 w-full border-dashed"
-                    size="sm"
-                    icon={Plus}
-                    text="Add Meal"
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        onAddMeal()
-                    }}
-                />
             </CardContent>
         </Card>
     )

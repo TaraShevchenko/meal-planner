@@ -1,4 +1,5 @@
 import { Text } from 'shared/ui/Text'
+import { num } from 'shared/utils/num'
 
 interface NutritionTotals {
     calories: number
@@ -16,10 +17,10 @@ export function MealTotals({ totals }: MealTotalsProps) {
         <div className="flex justify-between rounded-lg bg-muted/50 p-3 text-sm">
             <Text variant="sm" text="Total:" />
             <div className="flex gap-4">
-                <Text variant="sm" text={`${totals.calories} kcal`} />
-                <Text variant="sm" text={`P: ${totals.protein}g`} />
-                <Text variant="sm" text={`F: ${totals.fat}g`} />
-                <Text variant="sm" text={`C: ${totals.carbs}g`} />
+                <Text variant="sm" text={`${num(totals.calories)} kcal`} />
+                <Text variant="sm" text={`P: ${num(totals.protein)}g`} />
+                <Text variant="sm" text={`F: ${num(totals.fat)}g`} />
+                <Text variant="sm" text={`C: ${num(totals.carbs)}g`} />
             </div>
         </div>
     )
