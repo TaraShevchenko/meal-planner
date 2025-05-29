@@ -1,4 +1,4 @@
-import { createTRPCRouter, publicProcedure } from 'shared/lib/trpc/trpc'
+import { createTRPCRouter, protectedProcedure } from 'shared/lib/trpc/trpc'
 
 import {
     addItemToMealSchema,
@@ -9,7 +9,7 @@ import {
 } from './schemes'
 
 export const plannerRouter = createTRPCRouter({
-    getIngredients: publicProcedure.query(async ({ ctx }) => {
+    getIngredients: protectedProcedure.query(async ({ ctx }) => {
         const ingredients = await ctx.db.ingredients.findMany({
             orderBy: {
                 name: 'asc',
@@ -24,7 +24,7 @@ export const plannerRouter = createTRPCRouter({
         }
     }),
 
-    getRecipes: publicProcedure.query(async ({ ctx }) => {
+    getRecipes: protectedProcedure.query(async ({ ctx }) => {
         const recipes = await ctx.db.recipe.findMany({
             include: {
                 ingredients: {
@@ -46,7 +46,7 @@ export const plannerRouter = createTRPCRouter({
         }
     }),
 
-    getMenuByDate: publicProcedure.input(getMenuByDateSchema).query(async ({ ctx, input }) => {
+    getMenuByDate: protectedProcedure.input(getMenuByDateSchema).query(async ({ ctx, input }) => {
         const { date } = input
         const startOfDay = new Date(`${date}T00:00:00.000Z`)
         const endOfDay = new Date(`${date}T23:59:59.999Z`)
@@ -57,6 +57,7 @@ export const plannerRouter = createTRPCRouter({
                     gte: startOfDay,
                     lte: endOfDay,
                 },
+                userId: ctx.session.user.id,
             },
             include: {
                 meals: {
@@ -92,7 +93,7 @@ export const plannerRouter = createTRPCRouter({
         }
     }),
 
-    addItemToMeal: publicProcedure.input(addItemToMealSchema).mutation(async ({ ctx, input }) => {
+    addItemToMeal: protectedProcedure.input(addItemToMealSchema).mutation(async ({ ctx, input }) => {
         const { date, mealType, itemType, itemId, quantity } = input
         const menuDate = new Date(`${date}T12:00:00.000Z`)
 
@@ -102,6 +103,7 @@ export const plannerRouter = createTRPCRouter({
                     gte: new Date(`${date}T00:00:00.000Z`),
                     lte: new Date(`${date}T23:59:59.999Z`),
                 },
+                userId: ctx.session.user.id,
             },
             include: {
                 meals: true,
@@ -112,6 +114,7 @@ export const plannerRouter = createTRPCRouter({
             menu = await ctx.db.menu.create({
                 data: {
                     date: menuDate,
+                    userId: ctx.session.user.id,
                 },
                 include: {
                     meals: true,
@@ -169,6 +172,7 @@ export const plannerRouter = createTRPCRouter({
         const updatedMenu = await ctx.db.menu.findFirst({
             where: {
                 id: menu.id,
+                userId: ctx.session.user.id,
             },
             include: {
                 meals: {
@@ -204,7 +208,7 @@ export const plannerRouter = createTRPCRouter({
         }
     }),
 
-    removeItemFromMeal: publicProcedure.input(removeItemFromMealSchema).mutation(async ({ ctx, input }) => {
+    removeItemFromMeal: protectedProcedure.input(removeItemFromMealSchema).mutation(async ({ ctx, input }) => {
         const { date, mealType, itemType, itemId } = input
 
         const menu = await ctx.db.menu.findFirst({
@@ -213,6 +217,7 @@ export const plannerRouter = createTRPCRouter({
                     gte: new Date(`${date}T00:00:00.000Z`),
                     lte: new Date(`${date}T23:59:59.999Z`),
                 },
+                userId: ctx.session.user.id,
             },
             include: {
                 meals: true,
@@ -252,6 +257,7 @@ export const plannerRouter = createTRPCRouter({
         const updatedMenu = await ctx.db.menu.findFirst({
             where: {
                 id: menu.id,
+                userId: ctx.session.user.id,
             },
             include: {
                 meals: {
@@ -287,7 +293,7 @@ export const plannerRouter = createTRPCRouter({
         }
     }),
 
-    updateItemQuantity: publicProcedure.input(updateItemQuantitySchema).mutation(async ({ ctx, input }) => {
+    updateItemQuantity: protectedProcedure.input(updateItemQuantitySchema).mutation(async ({ ctx, input }) => {
         const { date, mealType, itemType, itemId, quantity } = input
 
         const menu = await ctx.db.menu.findFirst({
@@ -296,6 +302,7 @@ export const plannerRouter = createTRPCRouter({
                     gte: new Date(`${date}T00:00:00.000Z`),
                     lte: new Date(`${date}T23:59:59.999Z`),
                 },
+                userId: ctx.session.user.id,
             },
             include: {
                 meals: true,
@@ -341,6 +348,7 @@ export const plannerRouter = createTRPCRouter({
         const updatedMenu = await ctx.db.menu.findFirst({
             where: {
                 id: menu.id,
+                userId: ctx.session.user.id,
             },
             include: {
                 meals: {
@@ -376,7 +384,7 @@ export const plannerRouter = createTRPCRouter({
         }
     }),
 
-    toggleMealCompletion: publicProcedure.input(toggleMealCompletionSchema).mutation(async ({ ctx, input }) => {
+    toggleMealCompletion: protectedProcedure.input(toggleMealCompletionSchema).mutation(async ({ ctx, input }) => {
         const { date, mealType } = input
 
         const menu = await ctx.db.menu.findFirst({
@@ -385,6 +393,7 @@ export const plannerRouter = createTRPCRouter({
                     gte: new Date(`${date}T00:00:00.000Z`),
                     lte: new Date(`${date}T23:59:59.999Z`),
                 },
+                userId: ctx.session.user.id,
             },
             include: {
                 meals: true,
@@ -419,6 +428,7 @@ export const plannerRouter = createTRPCRouter({
         const updatedMenu = await ctx.db.menu.findFirst({
             where: {
                 id: menu.id,
+                userId: ctx.session.user.id,
             },
             include: {
                 meals: {
