@@ -20,17 +20,15 @@ export interface MealItemData {
     protein: number
     fat: number
     carbs: number
-    completed?: boolean
 }
 
 interface MealItemProps {
     item: MealItemData
     onEdit: (id: string, amount: number) => void
     onDelete: (id: string) => void
-    onComplete: (id: string) => void
 }
 
-export function MealItem({ item, onEdit, onDelete, onComplete }: MealItemProps) {
+export function MealItem({ item, onEdit, onDelete }: MealItemProps) {
     const [isEditing, setIsEditing] = useState(false)
     const [editAmount, setEditAmount] = useState(item.amount.toString())
 
@@ -53,9 +51,7 @@ export function MealItem({ item, onEdit, onDelete, onComplete }: MealItemProps) 
     }
 
     return (
-        <div
-            className={`flex items-center justify-between rounded-lg border p-2 ${item.completed ? 'border-green-400/50 ring-1 ring-green-400/50' : ''}`}
-        >
+        <div className="flex items-center justify-between rounded-lg border p-2">
             <div className="flex-1">
                 <div className="flex items-center gap-2">
                     <Text text={item.name} />
@@ -89,13 +85,7 @@ export function MealItem({ item, onEdit, onDelete, onComplete }: MealItemProps) 
                 ) : (
                     <>
                         <Text text={`${num(item.amount)} ${item.unit}`} />
-                        {item.completed && <Check className="h-4 w-4 text-green-500" />}
-                        <MealItemActions
-                            item={item}
-                            onEdit={handleStartEdit}
-                            onDelete={() => onDelete(item.id)}
-                            onComplete={() => onComplete(item.id)}
-                        />
+                        <MealItemActions onEdit={handleStartEdit} onDelete={() => onDelete(item.id)} />
                     </>
                 )}
             </div>

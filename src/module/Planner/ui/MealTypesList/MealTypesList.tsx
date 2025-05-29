@@ -14,17 +14,17 @@ interface MealTypesListProps {
 }
 
 interface MealType {
-    id: PrismaMealType
+    type: PrismaMealType
     name: string
     color: string
     items: number
 }
 
 const mealTypes: MealType[] = [
-    { id: 'breakfast', name: 'Breakfast', color: 'bg-orange-500', items: 0 },
-    { id: 'lunch', name: 'Lunch', color: 'bg-blue-500', items: 0 },
-    { id: 'dinner', name: 'Dinner', color: 'bg-blue-600', items: 0 },
-    { id: 'snack', name: 'Snack', color: 'bg-purple-500', items: 0 },
+    { type: 'breakfast', name: 'Breakfast', color: 'bg-orange-500', items: 0 },
+    { type: 'lunch', name: 'Lunch', color: 'bg-blue-500', items: 0 },
+    { type: 'dinner', name: 'Dinner', color: 'bg-blue-600', items: 0 },
+    { type: 'snack', name: 'Snack', color: 'bg-purple-500', items: 0 },
 ]
 
 function calculateMealNutrition(meal: Partial<MealWithDetails>) {
@@ -70,12 +70,16 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
         return meal || null
     }
 
+    const getMealCompletedTime = (mealType: PrismaMealType) => {
+        const meal = getMealData(mealType)
+        return meal?.mealTime
+    }
+
     const getMealItems = (mealType: PrismaMealType): MealItemData[] => {
         const meal = getMealData(mealType)
         if (!meal) return []
 
         const items: MealItemData[] = []
-        const isCompleted = meal.mealTime !== null
 
         meal.ingredients?.forEach((item) => {
             items.push({
@@ -88,7 +92,6 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
                 protein: Math.round(((item.ingredient.protein * item.quantity) / 100) * 10) / 10,
                 fat: Math.round(((item.ingredient.fat * item.quantity) / 100) * 10) / 10,
                 carbs: Math.round(((item.ingredient.carbs * item.quantity) / 100) * 10) / 10,
-                completed: isCompleted,
             })
         })
 
@@ -104,16 +107,15 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
                 protein: nutrition.protein,
                 fat: nutrition.fat,
                 carbs: nutrition.carbs,
-                completed: isCompleted,
             })
         })
 
         return items
     }
 
-    const getUpdatedMealTypes = (): MealType[] => {
+    const getUpdatedMeals = (): MealType[] => {
         return mealTypes.map((mealType) => {
-            const items = getMealItems(mealType.id)
+            const items = getMealItems(mealType.type)
             return {
                 ...mealType,
                 items: items.length,
@@ -156,10 +158,10 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
         }
     }
 
-    const handleCompleteItem = async (itemId: string) => {
+    const handleCompleteMeal = async (mealType: PrismaMealType) => {
         await planner.toggleMealCompletion.mutate({
             date: selectedDate,
-            mealType: selectedMeal as PrismaMealType,
+            mealType: mealType,
         })
     }
 
@@ -172,7 +174,7 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
         return (
             <div className="space-y-4">
                 {mealTypes.map((mealType) => (
-                    <div key={mealType.id} className="animate-pulse">
+                    <div key={mealType.type} className="animate-pulse">
                         <div className="h-16 rounded-lg bg-gray-200"></div>
                     </div>
                 ))}
@@ -182,16 +184,17 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
 
     return (
         <div className="space-y-4">
-            {getUpdatedMealTypes().map((mealType) => (
+            {getUpdatedMeals().map((meal) => (
                 <MealSection
-                    key={mealType.id}
-                    mealType={mealType}
-                    items={getMealItems(mealType.id)}
-                    isSelected={selectedMeal === mealType.id}
-                    onSelect={() => handleSelectMeal(mealType.id)}
+                    key={meal.type}
+                    meal={meal}
+                    items={getMealItems(meal.type)}
+                    isSelected={selectedMeal === meal.type}
+                    onSelect={() => handleSelectMeal(meal.type)}
                     onEditItem={handleEditItem}
                     onDeleteItem={handleDeleteItem}
-                    onCompleteItem={handleCompleteItem}
+                    onCompleteMeal={handleCompleteMeal}
+                    mealCompletedTime={getMealCompletedTime(meal.type) ?? null}
                 />
             ))}
         </div>

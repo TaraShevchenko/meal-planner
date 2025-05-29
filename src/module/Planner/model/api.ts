@@ -401,7 +401,10 @@ export const plannerRouter = createTRPCRouter({
             throw new Error('Meal not found')
         }
 
-        const currentTime = new Date()
+        const now = new Date()
+        const mealTime = new Date(menu.date)
+        mealTime.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds())
+
         const isCurrentlyCompleted = meal.mealTime !== null
 
         await ctx.db.meal.update({
@@ -409,7 +412,7 @@ export const plannerRouter = createTRPCRouter({
                 id: meal.id,
             },
             data: {
-                mealTime: isCurrentlyCompleted ? null : currentTime,
+                mealTime: isCurrentlyCompleted ? null : mealTime,
             },
         })
 

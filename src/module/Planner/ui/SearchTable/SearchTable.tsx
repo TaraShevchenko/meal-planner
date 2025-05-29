@@ -22,7 +22,7 @@ interface SearchTableProps {
 
 export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
     const [searchTerm, setSearchTerm] = useState('')
-    const [activeTab, setActiveTab] = useState<'ingredients' | 'recipes'>('ingredients')
+    const [activeTab, setActiveTab] = useState<'ingredients' | 'recipes'>('recipes')
 
     const { data: ingredientsData, isLoading: isLoadingIngredients } = api.planner.getIngredients.useQuery()
     const { data: recipesData, isLoading: isLoadingRecipes } = api.planner.getRecipes.useQuery()

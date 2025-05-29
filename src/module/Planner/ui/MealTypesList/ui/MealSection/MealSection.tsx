@@ -1,34 +1,41 @@
+import { type MealType as PrismaMealType } from '@prisma/client'
+import { Check, X } from 'lucide-react'
+
+import { Badge } from 'shared/ui/Badge'
+import { Button } from 'shared/ui/Button'
 import { Card, CardContent, CardHeader, CardTitle } from 'shared/ui/Card'
 import { Text } from 'shared/ui/Text'
 
 import { MealItem, type MealItemData } from '../MealItem/MealItem'
 import { MealTotals } from '../MealTotals/MealTotals'
 
-interface MealType {
-    id: string
+interface Meal {
+    type: PrismaMealType
     name: string
     color: string
     items: number
 }
 
 interface MealSectionProps {
-    mealType: MealType
+    meal: Meal
     items: MealItemData[]
     isSelected: boolean
     onSelect: () => void
-    onEditItem: (id: string, amount: number) => void
-    onDeleteItem: (id: string) => void
-    onCompleteItem: (id: string) => void
+    onEditItem: (type: string, amount: number) => void
+    onDeleteItem: (type: string) => void
+    onCompleteMeal: (type: PrismaMealType) => void
+    mealCompletedTime: Date | null
 }
 
 export function MealSection({
-    mealType,
+    meal,
     items,
     isSelected,
     onSelect,
     onEditItem,
     onDeleteItem,
-    onCompleteItem,
+    onCompleteMeal,
+    mealCompletedTime,
 }: MealSectionProps) {
     const calculateTotals = (items: MealItemData[]) => {
         return items.reduce(
@@ -52,11 +59,46 @@ export function MealSection({
             <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className={`h-3 w-3 rounded-full ${mealType.color}`} />
-                        <CardTitle className="text-lg">{mealType.name}</CardTitle>
+                        <div className={`h-3 w-3 rounded-full ${meal.color}`} />
+                        <CardTitle className="text-lg">{meal.name}</CardTitle>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Text variant="sm" text={`${items.length} items`} />
+                        {mealCompletedTime ? (
+                            <div className="flex items-center gap-2">
+                                <Text text={'Completed at'} />
+                                <Badge variant="secondary">
+                                    <Text
+                                        className="text-secondary-foreground"
+                                        text={mealCompletedTime.toLocaleTimeString()}
+                                    />
+                                </Badge>
+                                <Button
+                                    className="max-h-[26px]"
+                                    size="iconSm"
+                                    variant="ghost"
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        onCompleteMeal(meal.type)
+                                    }}
+                                    disabled={items?.length < 1}
+                                    icon={X}
+                                />
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    className="max-h-[26px]"
+                                    size="iconSm"
+                                    variant="ghost"
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        onCompleteMeal(meal.type)
+                                    }}
+                                    icon={Check}
+                                    disabled={items?.length < 1}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
             </CardHeader>
@@ -66,13 +108,7 @@ export function MealSection({
                         <MealTotals totals={totals} />
                         <div className="space-y-2">
                             {items.map((item) => (
-                                <MealItem
-                                    key={item.id}
-                                    item={item}
-                                    onEdit={onEditItem}
-                                    onDelete={onDeleteItem}
-                                    onComplete={onCompleteItem}
-                                />
+                                <MealItem key={item.id} item={item} onEdit={onEditItem} onDelete={onDeleteItem} />
                             ))}
                         </div>
                     </div>
