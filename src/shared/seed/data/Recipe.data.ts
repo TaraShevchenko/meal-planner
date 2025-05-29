@@ -1,50 +1,5 @@
 import { INGREDIENT_NAMES } from './Ingredients.data'
 
-export const RECIPE_NAMES = {
-    // CARBS
-    Rise: 'Рис',
-    Bulgur: 'Булгур',
-    Buckwheat: 'Гречка',
-    Lentils: 'Чечевица',
-    Pasta: 'Макароны "Паутинка"',
-    Noodles: 'Лапша',
-    MashedPotatoes: 'Картофельное пюре',
-    StewedPotatoesWithMeat: 'Тушёная картошка с мясом',
-    RiceWithChickenAndCarrot: 'Рис с курицей и морковью',
-
-    // PROTEIN
-    Sausages: 'Сосиски',
-    ChickenGoulash: 'Гуляш куриный',
-    ChickenCutlets: 'Котлеты куриные',
-    ChickenChoppedCutlets: 'Котлеты рубленые куриные',
-    BakedChickenLegs: 'Запеченые куриные ножки',
-    BakedChickenWings: 'Запеченые куриные крылышки',
-    BakedChickenFillet: 'Запеченое куриное филе с овощами',
-
-    FriedEggs: 'Жареные яйца',
-    BoiledEggs: 'Вареные яйца',
-    OmeletteWithHam: 'Омлет с ветчиной',
-    OmeletteWithSausages: 'Омлет с сосисками',
-
-    MeatballsWithVegetables: 'Тефтели с овощами',
-    CottageCheeseWithSourCream: 'Творог со сметаной',
-
-    // FIBER
-    VegetableMix: 'Овощная смесь',
-    GratedBeetroot: 'Тертая свекла',
-    KoreanCarrot: 'Морковь по-корейски',
-    SauerkrautCabbage: 'Квашеная капуста',
-    PickledCucumbers: 'Огурцы маринованные',
-
-    Salad: 'Салат',
-    SaladWithRadish: 'Салат с редиской',
-    SaladWithTunaAndCorn: 'Салат с тунцом и кукурузой',
-    SaladWithHerbsAndOnions: 'Салат с зеленью и луком',
-    SaladWithCheeseAndMustard: 'Салат с сыром и горчицей',
-    SaladWithPeppersAndAvocado: 'Салат с перцем и авокадо',
-    SpinachChickenSalad: 'Салат со шпинатом и курицей',
-} as const
-
 type Recipe = {
     name: string
     ingredients: {
@@ -54,515 +9,192 @@ type Recipe = {
 }
 
 export const RECIPES: Recipe[] = [
-    // CARBS
     {
-        name: RECIPE_NAMES.Rise,
+        name: 'Омлет із шинкою та салатом',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Rice,
-                quantity: 60,
-            },
+            { ingredientName: INGREDIENT_NAMES.EGGS, quantity: 180 },
+            { ingredientName: INGREDIENT_NAMES.HAM, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.RADISH, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.LETTUCE, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.CRACKER, quantity: 20 },
         ],
     },
     {
-        name: RECIPE_NAMES.Bulgur,
+        name: 'Булгур з курячими котлетами',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Bulgur,
-                quantity: 60,
-            },
+            { ingredientName: INGREDIENT_NAMES.BULGUR, quantity: 200 },
+            { ingredientName: INGREDIENT_NAMES.CHICKEN_CUTLETS, quantity: 120 },
+            { ingredientName: INGREDIENT_NAMES.RADISH, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.LETTUCE, quantity: 50 },
         ],
     },
     {
-        name: RECIPE_NAMES.Buckwheat,
+        name: 'Булгур з буряком та олією',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Buckwheat,
-                quantity: 60,
-            },
+            { ingredientName: INGREDIENT_NAMES.BULGUR, quantity: 150 },
+            { ingredientName: INGREDIENT_NAMES.BEETROOT, quantity: 100 },
+            { ingredientName: INGREDIENT_NAMES.OLIVE_OIL, quantity: 10 },
+            { ingredientName: INGREDIENT_NAMES.BREAD, quantity: 30 },
         ],
     },
     {
-        name: RECIPE_NAMES.Lentils,
+        name: 'Сир з медом та сметаною',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Lentils,
-                quantity: 60,
-            },
+            { ingredientName: INGREDIENT_NAMES.CHEESE, quantity: 200 },
+            { ingredientName: INGREDIENT_NAMES.SOUR_CREAM, quantity: 30 },
+            { ingredientName: INGREDIENT_NAMES.HONEY, quantity: 15 },
+            { ingredientName: INGREDIENT_NAMES.CRACKER, quantity: 20 },
         ],
     },
     {
-        name: RECIPE_NAMES.Pasta,
+        name: 'Тушкована картопля з мʼясом',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Pasta,
-                quantity: 60,
-            },
+            { ingredientName: INGREDIENT_NAMES.POTATO, quantity: 200 },
+            { ingredientName: INGREDIENT_NAMES.MEAT, quantity: 100 },
+            { ingredientName: INGREDIENT_NAMES.SAUER_KRAUT, quantity: 50 },
         ],
     },
     {
-        name: RECIPE_NAMES.Noodles,
+        name: 'Картопляне пюре з салатом',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Noodles,
-                quantity: 60,
-            },
+            { ingredientName: INGREDIENT_NAMES.POTATO, quantity: 200 },
+            { ingredientName: INGREDIENT_NAMES.GREENS, quantity: 20 },
+            { ingredientName: INGREDIENT_NAMES.ONION, quantity: 30 },
+            { ingredientName: INGREDIENT_NAMES.EGGS, quantity: 60 },
         ],
     },
     {
-        name: RECIPE_NAMES.MashedPotatoes,
+        name: 'Яйця з овочевим салатом',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Potato,
-                quantity: 150,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Milk,
-                quantity: 50,
-            },
+            { ingredientName: INGREDIENT_NAMES.EGGS, quantity: 120 },
+            { ingredientName: INGREDIENT_NAMES.SWEET_PEPPER, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.AVOCADO, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.BREAD, quantity: 30 },
         ],
     },
     {
-        name: RECIPE_NAMES.StewedPotatoesWithMeat,
+        name: 'Макарони з куркою',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Potato,
-                quantity: 150,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.PorkSteak,
-                quantity: 100,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Carrot,
-                quantity: 30,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Onion,
-                quantity: 30,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.OliveOil,
-                quantity: 10,
-            },
+            { ingredientName: INGREDIENT_NAMES.PASTA, quantity: 200 },
+            { ingredientName: INGREDIENT_NAMES.CHICKEN_LEGS, quantity: 160 },
+            { ingredientName: INGREDIENT_NAMES.AVOCADO, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.SWEET_PEPPER, quantity: 50 },
         ],
     },
     {
-        name: RECIPE_NAMES.RiceWithChickenAndCarrot,
+        name: 'Макарони з морквою по-корейськи',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Rice,
-                quantity: 60,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenFillet,
-                quantity: 100,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Carrot,
-                quantity: 30,
-            },
-        ],
-    },
-
-    // PROTEIN
-    {
-        name: RECIPE_NAMES.Sausages,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Sausages,
-                quantity: 120,
-            },
+            { ingredientName: INGREDIENT_NAMES.PASTA, quantity: 150 },
+            { ingredientName: INGREDIENT_NAMES.KOREAN_CARROTS, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.CRACKER, quantity: 20 },
+            { ingredientName: INGREDIENT_NAMES.BUTTER, quantity: 10 },
         ],
     },
     {
-        name: RECIPE_NAMES.ChickenGoulash,
+        name: 'Яєчня з салатом та хлібом',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenFillet,
-                quantity: 120,
-            },
+            { ingredientName: INGREDIENT_NAMES.EGGS, quantity: 120 },
+            { ingredientName: INGREDIENT_NAMES.BREAD, quantity: 30 },
+            { ingredientName: INGREDIENT_NAMES.BUTTER, quantity: 10 },
+            { ingredientName: INGREDIENT_NAMES.CHEESE, quantity: 30 },
+            { ingredientName: INGREDIENT_NAMES.MUSTARD, quantity: 10 },
         ],
     },
     {
-        name: RECIPE_NAMES.ChickenCutlets,
+        name: 'Гречка з курячими крильцями',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenCutlet,
-                quantity: 120,
-            },
+            { ingredientName: INGREDIENT_NAMES.BUCKWHEAT, quantity: 200 },
+            { ingredientName: INGREDIENT_NAMES.CHICKEN_WINGS, quantity: 80 },
+            { ingredientName: INGREDIENT_NAMES.CHEESE, quantity: 30 },
+            { ingredientName: INGREDIENT_NAMES.MUSTARD, quantity: 10 },
         ],
     },
     {
-        name: RECIPE_NAMES.ChickenChoppedCutlets,
+        name: 'Гречка з квашеною капустою',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenMince,
-                quantity: 120,
-            },
+            { ingredientName: INGREDIENT_NAMES.BUCKWHEAT, quantity: 150 },
+            { ingredientName: INGREDIENT_NAMES.SAUER_KRAUT, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.KOREAN_CARROTS, quantity: 50 },
         ],
     },
     {
-        name: RECIPE_NAMES.BakedChickenLegs,
+        name: 'Омлет із сосисками',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenDrumsticks,
-                quantity: 120,
-            },
+            { ingredientName: INGREDIENT_NAMES.EGGS, quantity: 120 },
+            { ingredientName: INGREDIENT_NAMES.SAUSAGE, quantity: 80 },
+            { ingredientName: INGREDIENT_NAMES.CUCUMBER, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.TOMATO, quantity: 50 },
         ],
     },
     {
-        name: RECIPE_NAMES.BakedChickenWings,
+        name: 'Локшина з курячими котлетами',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenLeg,
-                quantity: 120,
-            },
+            { ingredientName: INGREDIENT_NAMES.NOODLES, quantity: 200 },
+            { ingredientName: INGREDIENT_NAMES.CHICKEN_CUTLETS, quantity: 120 },
+            { ingredientName: INGREDIENT_NAMES.CUCUMBER, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.TOMATO, quantity: 50 },
         ],
     },
     {
-        name: RECIPE_NAMES.BakedChickenFillet,
+        name: 'Локшина з морквою та сиром',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenFillet,
-                quantity: 120,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Broccoli,
-                quantity: 30,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Carrot,
-                quantity: 30,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.OliveOil,
-                quantity: 10,
-            },
+            { ingredientName: INGREDIENT_NAMES.NOODLES, quantity: 150 },
+            { ingredientName: INGREDIENT_NAMES.KOREAN_CARROTS, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.BREAD, quantity: 30 },
+            { ingredientName: INGREDIENT_NAMES.CHEESE, quantity: 30 },
         ],
     },
     {
-        name: RECIPE_NAMES.FriedEggs,
+        name: 'Сир з бананом',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenEgg,
-                quantity: 200,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.OliveOil,
-                quantity: 5,
-            },
+            { ingredientName: INGREDIENT_NAMES.CHEESE, quantity: 200 },
+            { ingredientName: INGREDIENT_NAMES.BANANA, quantity: 100 },
+            { ingredientName: INGREDIENT_NAMES.CRACKER, quantity: 20 },
         ],
     },
     {
-        name: RECIPE_NAMES.BoiledEggs,
+        name: 'Рис з тефтелями',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenEgg,
-                quantity: 200,
-            },
+            { ingredientName: INGREDIENT_NAMES.RICE, quantity: 200 },
+            { ingredientName: INGREDIENT_NAMES.MEATBALLS, quantity: 120 },
+            { ingredientName: INGREDIENT_NAMES.PICKLED_CUCUMBERS, quantity: 50 },
         ],
     },
     {
-        name: RECIPE_NAMES.OmeletteWithHam,
+        name: 'Рис з буряком та зеленню',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenEgg,
-                quantity: 140,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Ham,
-                quantity: 80,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.HardCheese,
-                quantity: 30,
-            },
+            { ingredientName: INGREDIENT_NAMES.RICE, quantity: 150 },
+            { ingredientName: INGREDIENT_NAMES.BEETROOT, quantity: 100 },
+            { ingredientName: INGREDIENT_NAMES.LETTUCE, quantity: 50 },
+            { ingredientName: INGREDIENT_NAMES.GREENS, quantity: 20 },
         ],
     },
     {
-        name: RECIPE_NAMES.OmeletteWithSausages,
+        name: 'Яйця з зеленню та хлібом',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenEgg,
-                quantity: 140,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Sausages,
-                quantity: 80,
-            },
+            { ingredientName: INGREDIENT_NAMES.EGGS, quantity: 120 },
+            { ingredientName: INGREDIENT_NAMES.GREENS, quantity: 20 },
+            { ingredientName: INGREDIENT_NAMES.ONION, quantity: 30 },
+            { ingredientName: INGREDIENT_NAMES.BREAD, quantity: 30 },
+            { ingredientName: INGREDIENT_NAMES.BUTTER, quantity: 10 },
         ],
     },
     {
-        name: RECIPE_NAMES.MeatballsWithVegetables,
+        name: 'Пюре з курячими крильцями',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenMince,
-                quantity: 120,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Carrot,
-                quantity: 30,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Onion,
-                quantity: 20,
-            },
+            { ingredientName: INGREDIENT_NAMES.POTATO, quantity: 200 },
+            { ingredientName: INGREDIENT_NAMES.CHICKEN_WINGS, quantity: 80 },
+            { ingredientName: INGREDIENT_NAMES.GREENS, quantity: 20 },
+            { ingredientName: INGREDIENT_NAMES.ONION, quantity: 30 },
         ],
     },
     {
-        name: RECIPE_NAMES.CottageCheeseWithSourCream,
+        name: 'Пюре з буряком та сиром',
         ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.CottageCheese,
-                quantity: 150,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.SourCream,
-                quantity: 50,
-            },
-        ],
-    },
-
-    // FIBER
-    {
-        name: RECIPE_NAMES.VegetableMix,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Carrot,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.SweetPepper,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Cucumber,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Tomato,
-                quantity: 50,
-            },
-        ],
-    },
-    {
-        name: RECIPE_NAMES.GratedBeetroot,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Beetroot,
-                quantity: 50,
-            },
-        ],
-    },
-    {
-        name: RECIPE_NAMES.KoreanCarrot,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.KoreanCarrot,
-                quantity: 10,
-            },
-        ],
-    },
-    {
-        name: RECIPE_NAMES.SauerkrautCabbage,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.SauerkrautCabbage,
-                quantity: 50,
-            },
-        ],
-    },
-    {
-        name: RECIPE_NAMES.PickledCucumbers,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.PickledGherkin,
-                quantity: 30,
-            },
-        ],
-    },
-    {
-        name: RECIPE_NAMES.Salad,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Salad,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Cucumber,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Tomato,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.SweetPepper,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.OliveOil,
-                quantity: 10,
-            },
-        ],
-    },
-    {
-        name: RECIPE_NAMES.SaladWithRadish,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Salad,
-                quantity: 40,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Cucumber,
-                quantity: 30,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Radish,
-                quantity: 30,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Tomato,
-                quantity: 30,
-            },
-        ],
-    },
-    {
-        name: RECIPE_NAMES.SaladWithTunaAndCorn,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Salad,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.CannedCorn,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.CannedTuna,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.CreamCheese,
-                quantity: 50,
-            },
-        ],
-    },
-    {
-        name: RECIPE_NAMES.SaladWithHerbsAndOnions,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Salad,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Herbs,
-                quantity: 30,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Cucumber,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Tomato,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Onion,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.OliveOil,
-                quantity: 10,
-            },
-        ],
-    },
-    {
-        name: RECIPE_NAMES.SaladWithCheeseAndMustard,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Salad,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.CamembertCheese,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.ComoInsalataCheese,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Mustard,
-                quantity: 10,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Cucumber,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Tomato,
-                quantity: 50,
-            },
-        ],
-    },
-    {
-        name: RECIPE_NAMES.SaladWithPeppersAndAvocado,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Salad,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Cucumber,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Tomato,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.SweetPepper,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Avocado,
-                quantity: 30,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.Onion,
-                quantity: 20,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.OliveOil,
-                quantity: 10,
-            },
-        ],
-    },
-    {
-        name: RECIPE_NAMES.SpinachChickenSalad,
-        ingredients: [
-            {
-                ingredientName: INGREDIENT_NAMES.Spinach,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenFillet,
-                quantity: 100,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.SoftCheese,
-                quantity: 30,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.CannedCorn,
-                quantity: 50,
-            },
-            {
-                ingredientName: INGREDIENT_NAMES.ChickenEgg,
-                quantity: 50,
-            },
+            { ingredientName: INGREDIENT_NAMES.POTATO, quantity: 150 },
+            { ingredientName: INGREDIENT_NAMES.BEETROOT, quantity: 100 },
+            { ingredientName: INGREDIENT_NAMES.BREAD, quantity: 30 },
+            { ingredientName: INGREDIENT_NAMES.CHEESE, quantity: 50 },
         ],
     },
 ]
