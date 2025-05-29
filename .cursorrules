@@ -90,11 +90,10 @@ core/DomainName/
 ├── index.ts           # Публичный API домена (barrel export)
 ├── ui/                # UI компоненты домена
 │   ├── ComponentName/
-│   │   ├── index.ts            # Публичный API компонента (опционально если разделение на client и server не нужно)
-│   │   ├── client.ts           # Публичный API для клиентского кода
-│   │   ├── server.ts           # Публичный API для серверного кода
-│   │   ├── ComponentName.tsx  # Основной компонент
-│   │   └── ComponentName.stories.tsx (опционально)
+│   │   ├── index.ts                  # Публичный API компонента для клиентских или серверных частей (но в случае если смешиваються и те и те тогда нужно серверные выносить в файл server.ts)
+│   │   ├── server.ts                 # Публичный API для серверного кода (если нужно)
+│   │   ├── ComponentName.tsx         # Основной компонент
+│   │   └── ComponentName.stories.tsx # Story компонента (опционально)
 │   └── ...
 └── model/             # Бизнес-логика домена
     ├── api.ts         # API роутеры/запросы (tRPC)

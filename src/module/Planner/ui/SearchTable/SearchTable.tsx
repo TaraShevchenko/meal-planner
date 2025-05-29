@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 
+import { type MealType as PrismaMealType } from '@prisma/client'
 import { Plus, Search } from 'lucide-react'
 
 import { api } from 'shared/lib/trpc/client'
@@ -12,14 +13,20 @@ import { Input } from 'shared/ui/Input'
 import { Table, TableBody, TableCell, TableCellWithChildren, TableHead, TableHeader, TableRow } from 'shared/ui/Table'
 import { Text } from 'shared/ui/Text'
 
-import { type SearchTableProps } from '../../model/types'
+import { usePlanner } from '../../model/hooks'
 
-export function SearchTable({ selectedMeal }: SearchTableProps) {
+interface SearchTableProps {
+    selectedMeal: string
+    selectedDate: string
+}
+
+export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
     const [searchTerm, setSearchTerm] = useState('')
     const [activeTab, setActiveTab] = useState<'ingredients' | 'recipes'>('ingredients')
 
     const { data: ingredientsData, isLoading: isLoadingIngredients } = api.planner.getIngredients.useQuery()
     const { data: recipesData, isLoading: isLoadingRecipes } = api.planner.getRecipes.useQuery()
+    const planner = usePlanner()
 
     const ingredients = ingredientsData?.data?.ingredients ?? []
     const recipes = recipesData?.data?.recipes ?? []
@@ -31,6 +38,34 @@ export function SearchTable({ selectedMeal }: SearchTableProps) {
     const filteredRecipes = recipes.filter((recipe) => recipe.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const isLoading = isLoadingIngredients || isLoadingRecipes
+
+    const handleAddIngredient = async (ingredientId: string) => {
+        try {
+            await planner.addItem.mutate({
+                date: selectedDate,
+                mealType: selectedMeal as PrismaMealType,
+                itemType: 'ingredient',
+                itemId: ingredientId,
+                quantity: 100, // По умолчанию 100г
+            })
+        } catch (error) {
+            console.error('Error adding ingredient:', error)
+        }
+    }
+
+    const handleAddRecipe = async (recipeId: string) => {
+        try {
+            await planner.addItem.mutate({
+                date: selectedDate,
+                mealType: selectedMeal as PrismaMealType,
+                itemType: 'recipe',
+                itemId: recipeId,
+                quantity: 1, // По умолчанию 1 порция
+            })
+        } catch (error) {
+            console.error('Error adding recipe:', error)
+        }
+    }
 
     return (
         <Card>
@@ -44,11 +79,13 @@ export function SearchTable({ selectedMeal }: SearchTableProps) {
                             text={'Ingredients'}
                             variant={activeTab === 'ingredients' ? 'default' : 'outline'}
                             onClick={() => setActiveTab('ingredients')}
+                            disabled={planner.addItem.isLoading}
                         />
                         <Button
                             text={'Recipes'}
                             variant={activeTab === 'recipes' ? 'default' : 'outline'}
                             onClick={() => setActiveTab('recipes')}
+                            disabled={planner.addItem.isLoading}
                         />
                     </div>
                 </div>
@@ -57,7 +94,7 @@ export function SearchTable({ selectedMeal }: SearchTableProps) {
                         placeholder: `Поиск ${activeTab === 'ingredients' ? 'ингредиентов' : 'рецептов'}...`,
                         value: searchTerm,
                         onChange: (e) => setSearchTerm(e.target.value),
-                        disabled: isLoading,
+                        disabled: isLoading || planner.addItem.isLoading,
                     }}
                     leftIcon={Search}
                 />
@@ -79,14 +116,20 @@ export function SearchTable({ selectedMeal }: SearchTableProps) {
                         </TableHeader>
                         <TableBody>
                             {filteredIngredients.map((ingredient) => (
-                                <TableRow key={ingredient.name}>
+                                <TableRow key={ingredient.id}>
                                     <TableCell text={ingredient.name} />
                                     <TableCell text={`${ingredient.carbs}g`} />
                                     <TableCell text={`${ingredient.fat}g`} />
                                     <TableCell text={`${ingredient.protein}g`} />
                                     <TableCell text={`${ingredient.calories}kcal`} />
                                     <TableCellWithChildren>
-                                        <Button icon={Plus} variant="outline" size="sm" />
+                                        <Button
+                                            icon={Plus}
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleAddIngredient(ingredient.id)}
+                                            disabled={planner.addItem.isLoading}
+                                        />
                                     </TableCellWithChildren>
                                 </TableRow>
                             ))}
@@ -103,7 +146,7 @@ export function SearchTable({ selectedMeal }: SearchTableProps) {
                         </TableHeader>
                         <TableBody>
                             {filteredRecipes.map((recipe) => (
-                                <TableRow key={recipe.name}>
+                                <TableRow key={recipe.id}>
                                     <TableCell text={recipe.name} />
                                     <TableCellWithChildren className="flex flex-wrap gap-2">
                                         {recipe.ingredients.map((recipeIngredient) => (
@@ -113,7 +156,13 @@ export function SearchTable({ selectedMeal }: SearchTableProps) {
                                         ))}
                                     </TableCellWithChildren>
                                     <TableCellWithChildren>
-                                        <Button icon={Plus} variant="outline" size="sm" />
+                                        <Button
+                                            icon={Plus}
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleAddRecipe(recipe.id)}
+                                            disabled={planner.addItem.isLoading}
+                                        />
                                     </TableCellWithChildren>
                                 </TableRow>
                             ))}
@@ -126,6 +175,12 @@ export function SearchTable({ selectedMeal }: SearchTableProps) {
                         (activeTab === 'recipes' && filteredRecipes.length === 0)) && (
                         <div className="py-8 text-center text-muted-foreground">Ничего не найдено</div>
                     )}
+
+                {planner.addItem.error && (
+                    <div className="mt-2 rounded border border-red-300 bg-red-100 p-2 text-red-700">
+                        Ошибка при добавлении: {planner.addItem.error.message}
+                    </div>
+                )}
             </CardContent>
         </Card>
     )
