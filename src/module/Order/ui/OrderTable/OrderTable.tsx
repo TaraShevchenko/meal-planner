@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { addDays, format } from 'date-fns'
 import { ru } from 'date-fns/locale'
-import { Calendar } from 'lucide-react'
+import { ArrowRight, Calendar } from 'lucide-react'
 import { type DateRange } from 'react-day-picker'
 
 import { Button } from 'shared/ui/Button'
@@ -64,21 +64,10 @@ export function OrderTable({ className }: OrderTableProps) {
         }
     }
 
-    const getTotalWeight = () => {
-        return ingredients.reduce((total, ingredient) => total + ingredient.totalGrams, 0)
-    }
-
-    const getTotalCalories = () => {
-        return ingredients.reduce((total, ingredient) => {
-            const portionCalories = (ingredient.calories * ingredient.totalGrams) / 100
-            return total + portionCalories
-        }, 0)
-    }
-
     return (
         <div className={cn('space-y-6', className)}>
             <div className="flex items-center justify-between gap-4">
-                <Text variant="title" text="List of purchases" />
+                <Text variant="title" text="Choose a date range and go to shops" />
                 <div className="flex items-center gap-2">
                     <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                         <PopoverTrigger asChild>
