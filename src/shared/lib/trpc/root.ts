@@ -1,5 +1,6 @@
 import { authRouter } from 'core/Auth'
 
+import { orderRouter } from 'module/Order/server'
 import { plannerRouter } from 'module/Planner/server'
 import { userRouter } from 'module/User/server'
 
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
     auth: authRouter,
     user: userRouter,
     planner: plannerRouter,
+    order: orderRouter,
 })
 
 // export type definition of API
