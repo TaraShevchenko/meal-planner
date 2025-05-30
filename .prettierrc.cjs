@@ -14,6 +14,7 @@ const config = {
         '^(next/(.*)$)|^(next$)',
         '<THIRD_PARTY_MODULES>',
         '^app/(.*)$',
+        '^core/(.*)$',
         '^module/(.*)$',
         '^shared/(.*)$',
         '([.](png|jpg|jpeg|svg))$',

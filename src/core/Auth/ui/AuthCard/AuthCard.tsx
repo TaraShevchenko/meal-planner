@@ -1,7 +1,7 @@
 import Image from 'next/image'
 
-import { LangSelector } from 'module/core/LangSelector'
-import { ThemeSelector } from 'module/core/ThemeSelector'
+import { LangSelector } from 'core/LangSelector'
+import { ThemeSelector } from 'core/ThemeSelector'
 
 import { type Children, type ClassName } from 'shared/types'
 import { Card, CardDescription, CardHeader, CardTitle } from 'shared/ui/Card'

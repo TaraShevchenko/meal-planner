@@ -1,4 +1,4 @@
-import { AuthCard, AuthGoogle, AuthVarianceSplitter, LoginForm } from 'module/core/Auth'
+import { AuthCard, AuthGoogle, AuthVarianceSplitter, LoginForm } from 'core/Auth'
 
 import { type LocaleParams } from 'shared/lib/nextIntl'
 import { Anchor } from 'shared/ui/Button'

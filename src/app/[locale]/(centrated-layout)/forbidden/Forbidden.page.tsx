@@ -1,4 +1,4 @@
-import { RedirectBlock } from 'module/core/Auth'
+import { RedirectBlock } from 'core/Auth'
 
 import { type LocaleParams } from 'shared/lib/nextIntl'
 import { handleGenerateMetadata } from 'shared/utils/handleGenerateMetadata'

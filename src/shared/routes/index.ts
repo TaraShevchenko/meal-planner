@@ -6,8 +6,8 @@ export const ROUTES_PATHS = [
     '/unauthorized',
     '/login',
     '/registration',
-    '/dashboard',
-    '/admin-dashboard',
+    '/order',
+    '/planner',
 ] as const
 
 export const RoutesPaths = z.enum(ROUTES_PATHS)
