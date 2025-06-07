@@ -1,5 +1,7 @@
 import { CalendarIcon, ShoppingCartIcon } from 'lucide-react'
 
+import { LogoutButton } from 'core/Auth/ui/LogoutButton'
+
 import { RoutesPaths, type RoutesPathsType } from 'shared/routes'
 import { Anchor } from 'shared/ui/Button'
 import { Container } from 'shared/ui/Container'
@@ -18,11 +20,11 @@ export function Header({ pageTitle, pageUrl }: HeaderProps) {
                     <Text tag="h1" variant="title" text={pageTitle} />
                     <div className="flex items-center space-x-2">
                         <Anchor
-                            href={RoutesPaths.enum['/planner']}
+                            href={RoutesPaths.enum['/']}
                             text="Planner"
                             variant="link"
                             icon={CalendarIcon}
-                            isActive={pageUrl === RoutesPaths.enum['/planner']}
+                            isActive={pageUrl === RoutesPaths.enum['/']}
                         />
                         <Anchor
                             href={RoutesPaths.enum['/order']}
@@ -31,6 +33,7 @@ export function Header({ pageTitle, pageUrl }: HeaderProps) {
                             icon={ShoppingCartIcon}
                             isActive={pageUrl === RoutesPaths.enum['/order']}
                         />
+                        <LogoutButton />
                     </div>
                 </div>
             </Container>

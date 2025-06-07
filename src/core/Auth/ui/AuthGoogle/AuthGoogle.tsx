@@ -10,7 +10,7 @@ export const AuthGoogle = () => {
     const locale = useLocale()
 
     const handleSignIn = () => {
-        signIn('google', { callbackUrl: `/${locale}/dashboard` }).catch((error) => {
+        signIn('google', { callbackUrl: `/${locale}` }).catch((error) => {
             console.error('Sign-in google error:', error)
         })
     }

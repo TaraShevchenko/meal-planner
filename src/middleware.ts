@@ -11,6 +11,12 @@ const intlMiddleware = createIntlMiddleware(routing)
 export default async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl
 
+    const intlResponse = intlMiddleware(req)
+
+    if (intlResponse && intlResponse.status === 307) {
+        return intlResponse
+    }
+
     const token = await getToken({
         req,
         secret: process.env.NEXTAUTH_SECRET,
@@ -25,7 +31,7 @@ export default async function middleware(req: NextRequest) {
             return NextResponse.redirect(homeUrl)
         }
 
-        return intlMiddleware(req)
+        return intlResponse
     }
 
     if (!isAuthenticated) {
@@ -33,9 +39,9 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(unauthorizedUrl)
     }
 
-    return intlMiddleware(req)
+    return intlResponse
 }
 
 export const config = {
-    matcher: ['/', '/(ua|ru|en)/:path*'],
+    matcher: ['/((?!api|_next/static|_next/image|favicon.ico|robots.txt).*)'],
 }
