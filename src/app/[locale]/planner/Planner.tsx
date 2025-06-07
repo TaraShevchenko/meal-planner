@@ -8,7 +8,7 @@ import { Container } from 'shared/ui/Container'
 
 export function Planner() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-    const [selectedMeal, setSelectedMeal] = useState<string>('breakfast')
+    const [selectedMeal, setSelectedMeal] = useState<string | null>(null)
 
     const formatDateForAPI = (date: Date): string => {
         const year = date.getFullYear()
@@ -17,18 +17,20 @@ export function Planner() {
         return `${year}-${month}-${day}`
     }
 
-    const handleMealSelect = (mealType: string) => {
-        setSelectedMeal(mealType)
+    const handleMealSelect = (mealId: string) => {
+        setSelectedMeal(mealId)
     }
 
     return (
         <Container className="space-y-6 py-10">
             <PlannerHeader selectedDate={selectedDate} onDateChange={setSelectedDate} />
 
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <MealTypesList selectedDate={formatDateForAPI(selectedDate)} onMealSelect={handleMealSelect} />
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
+                <div className="lg:col-span-1 lg:pr-4">
+                    <MealTypesList selectedDate={formatDateForAPI(selectedDate)} onMealSelect={handleMealSelect} />
+                </div>
 
-                <div className="lg:col-span-2">
+                <div className="h-full lg:relative lg:col-span-2">
                     <SearchTable selectedMeal={selectedMeal} selectedDate={formatDateForAPI(selectedDate)} />
                 </div>
             </div>
