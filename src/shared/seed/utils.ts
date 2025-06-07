@@ -6,7 +6,7 @@
  * Создает дату для приема пищи в конкретное время
  */
 export function createMealTime(date: string, time: string): Date {
-    return new Date(`${date}T${time}:00Z`)
+    return new Date(`${date}T${time}:00`)
 }
 
 /**

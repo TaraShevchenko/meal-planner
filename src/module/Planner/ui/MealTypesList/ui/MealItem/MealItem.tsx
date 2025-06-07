@@ -55,9 +55,9 @@ export function MealItem({ item, onEdit, onDelete }: MealItemProps) {
             <div className="flex-1">
                 <div className="flex items-center gap-2">
                     <Text text={item.name} />
-                    <Badge variant="secondary">
+                    {/* <Badge variant="secondary">
                         <Text text={item.type === 'recipe' ? 'Recipe' : 'Ingredient'} variant="sm" />
-                    </Badge>
+                    </Badge> */}
                 </div>
                 <Text
                     className="mt-1"

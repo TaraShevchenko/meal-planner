@@ -22,7 +22,8 @@
         "seed:reset": "tsx src/shared/seed/reset.ts",
         "seed:ingredients": "tsx src/shared/seed/ingredients.ts",
         "seed:recipes": "tsx src/shared/seed/recipes.ts",
-        "seed:menus": "tsx src/shared/seed/menus.ts"
+        "seed:day-2025-06-02": "tsx src/shared/seed/data/2025-06-02/seed.ts",
+        "seed:day-2025-06-03": "tsx src/shared/seed/data/2025-06-03/seed.ts"
     },
     "dependencies": {
         "@auth/prisma-adapter": "^2.7.0",
