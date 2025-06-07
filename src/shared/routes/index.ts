@@ -1,14 +1,6 @@
 import { z } from 'zod'
 
-export const ROUTES_PATHS = [
-    '/',
-    '/forbidden',
-    '/unauthorized',
-    '/login',
-    '/registration',
-    '/order',
-    '/planner',
-] as const
+export const ROUTES_PATHS = ['/', '/forbidden', '/unauthorized', '/login', '/registration', '/order'] as const
 
 export const RoutesPaths = z.enum(ROUTES_PATHS)
 
@@ -16,7 +8,7 @@ export type RoutesPathsType = z.infer<typeof RoutesPaths>
 
 export const PUBLIC_ROUTES = ['/login', '/registration', '/unauthorized', '/forbidden', '/api/auth'] as const
 
-export const PRIVATE_ROUTES = ['/', '/planner', '/order'] as const
+export const PRIVATE_ROUTES = ['/', '/order'] as const
 
 export const GUEST_ONLY_ROUTES = ['/login', '/registration'] as const
 
