@@ -100,6 +100,12 @@ export type CreateMealData = {
     mealType: MealType
 }
 
+export type UpdateMealTimeData = {
+    date: string
+    mealType: MealType
+    mealTime: Date
+}
+
 export type PlannerHeaderProps = {
     selectedDate: Date
     onDateChange: (date: Date) => void

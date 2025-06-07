@@ -8,6 +8,7 @@ import {
     toggleMealCompletionSchema,
     updateItemQuantitySchema,
     updateMealOrderSchema,
+    updateMealTimeSchema,
 } from './schemes'
 
 export const plannerRouter = createTRPCRouter({
@@ -635,6 +636,89 @@ export const plannerRouter = createTRPCRouter({
             status: 200,
             data: {
                 mealId: meal.id,
+                menu: updatedMenu,
+            },
+        }
+    }),
+
+    updateMealTime: protectedProcedure.input(updateMealTimeSchema).mutation(async ({ ctx, input }) => {
+        const { date, mealType, mealTime } = input
+
+        const menu = await ctx.db.menu.findFirst({
+            where: {
+                date: {
+                    gte: new Date(`${date}T00:00:00.000Z`),
+                    lte: new Date(`${date}T23:59:59.999Z`),
+                },
+                userId: ctx.session.user.id,
+            },
+            include: {
+                meals: true,
+            },
+        })
+
+        if (!menu) {
+            throw new Error('Menu not found')
+        }
+
+        const meal = menu.meals.find((m) => m.type === mealType)
+
+        if (!meal) {
+            throw new Error('Meal not found')
+        }
+
+        const updatedMealTime = new Date(menu.date)
+        updatedMealTime.setHours(
+            mealTime.getHours(),
+            mealTime.getMinutes(),
+            mealTime.getSeconds(),
+            mealTime.getMilliseconds(),
+        )
+
+        await ctx.db.meal.update({
+            where: {
+                id: meal.id,
+            },
+            data: {
+                mealTime: updatedMealTime,
+            },
+        })
+
+        const updatedMenu = await ctx.db.menu.findFirst({
+            where: {
+                id: menu.id,
+                userId: ctx.session.user.id,
+            },
+            include: {
+                meals: {
+                    include: {
+                        recipes: {
+                            include: {
+                                recipe: {
+                                    include: {
+                                        ingredients: {
+                                            include: {
+                                                ingredient: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        ingredients: {
+                            include: {
+                                ingredient: true,
+                            },
+                        },
+                    },
+                    orderBy: [{ mealTime: { sort: 'asc', nulls: 'last' } }, { sortOrder: 'asc' }],
+                },
+            },
+        })
+
+        return {
+            status: 200,
+            data: {
                 menu: updatedMenu,
             },
         }

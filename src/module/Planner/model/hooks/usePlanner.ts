@@ -6,6 +6,7 @@ import {
     type RemoveItemFromMealData,
     type ToggleMealCompletionData,
     type UpdateMealOrderData,
+    type UpdateMealTimeData,
 } from '../types'
 
 export function usePlanner() {
@@ -47,6 +48,12 @@ export function usePlanner() {
         },
     })
 
+    const updateMealTime = api.planner.updateMealTime.useMutation({
+        onSuccess: () => {
+            utils.planner.getMenuByDate.invalidate()
+        },
+    })
+
     const handleAddItem = async (data: AddItemToMealData) => {
         return await addItemToMeal.mutateAsync(data)
     }
@@ -69,6 +76,10 @@ export function usePlanner() {
 
     const handleCreateMeal = async (data: CreateMealData) => {
         return await createMeal.mutateAsync(data)
+    }
+
+    const handleUpdateMealTime = async (data: UpdateMealTimeData) => {
+        return await updateMealTime.mutateAsync(data)
     }
 
     return {
@@ -101,6 +112,11 @@ export function usePlanner() {
             mutate: handleCreateMeal,
             isLoading: createMeal.isPending,
             error: createMeal.error,
+        },
+        updateMealTime: {
+            mutate: handleUpdateMealTime,
+            isLoading: updateMealTime.isPending,
+            error: updateMealTime.error,
         },
     }
 }
