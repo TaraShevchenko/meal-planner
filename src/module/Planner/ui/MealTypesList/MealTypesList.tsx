@@ -205,6 +205,14 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
         })
     }
 
+    const handleUpdateMealTime = async (mealType: PrismaMealType, time: Date) => {
+        await planner.updateMealTime.mutate({
+            date: selectedDate,
+            mealType: mealType,
+            mealTime: time,
+        })
+    }
+
     const handleSelectMeal = (mealId: string) => {
         setSelectedMeal(mealId)
         onMealSelect(mealId)
@@ -263,6 +271,7 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
                         onEditItem={handleEditItem}
                         onDeleteItem={handleDeleteItem}
                         onCompleteMeal={handleCompleteMeal}
+                        onUpdateMealTime={handleUpdateMealTime}
                         mealCompletedTime={getMealCompletedTime(meal.id) ?? null}
                     />
                 ))}

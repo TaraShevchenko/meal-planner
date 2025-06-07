@@ -1,10 +1,10 @@
 import { type MealType as PrismaMealType } from '@prisma/client'
 import { Check, ChevronDown, ChevronRight, X } from 'lucide-react'
 
-import { Badge } from 'shared/ui/Badge'
 import { Button } from 'shared/ui/Button'
 import { Card, CardContent, CardHeader, CardTitle } from 'shared/ui/Card'
 import { Text } from 'shared/ui/Text'
+import { TimeSelector } from 'shared/ui/TimeSelector'
 
 import { MealItem, type MealItemData } from '../MealItem/MealItem'
 import { MealTotals } from '../MealTotals/MealTotals'
@@ -27,6 +27,7 @@ interface MealSectionProps {
     onEditItem: (type: string, amount: number) => void
     onDeleteItem: (type: string) => void
     onCompleteMeal: (type: PrismaMealType) => void
+    onUpdateMealTime: (type: PrismaMealType, time: Date) => void
     mealCompletedTime: Date | null
 }
 
@@ -40,6 +41,7 @@ export function MealSection({
     onEditItem,
     onDeleteItem,
     onCompleteMeal,
+    onUpdateMealTime,
     mealCompletedTime,
 }: MealSectionProps) {
     const calculateTotals = (items: MealItemData[]) => {
@@ -81,12 +83,10 @@ export function MealSection({
                         {mealCompletedTime ? (
                             <div className="flex items-center gap-2">
                                 <Text text={'Completed at'} />
-                                <Badge variant="secondary">
-                                    <Text
-                                        className="text-secondary-foreground"
-                                        text={mealCompletedTime.toLocaleTimeString()}
-                                    />
-                                </Badge>
+                                <TimeSelector
+                                    value={mealCompletedTime}
+                                    onChange={(time: Date) => onUpdateMealTime(meal.type, time)}
+                                />
                                 <Button
                                     className="max-h-[26px]"
                                     size="iconSm"
