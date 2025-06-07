@@ -14,9 +14,9 @@ export async function generateMetadata({ params }: LocaleParams) {
 export default function ForbiddenPage() {
     return (
         <RedirectBlock
-            url="/dashboard"
+            url="/"
             title={'access_denied'}
-            pageName={'dashboard'}
+            pageName={'planner'}
             // hint={'insufficient_rights'}
             warning={'please_contact_the_site_administrator_to_obtain_access_rights_to_this_page'}
         />

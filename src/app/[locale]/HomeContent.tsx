@@ -6,7 +6,7 @@ import { MealTypesList, PlannerHeader, SearchTable } from 'module/Planner'
 
 import { Container } from 'shared/ui/Container'
 
-export function Planner() {
+export function HomeContent() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
     const [selectedMeal, setSelectedMeal] = useState<string | null>(null)
 

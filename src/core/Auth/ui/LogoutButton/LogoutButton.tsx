@@ -11,7 +11,7 @@ type LogoutButtonProps = { hideIfNoSession?: boolean } & Partial<ClassName>
 export function LogoutButton({ className, hideIfNoSession = true }: LogoutButtonProps) {
     const { data: session } = useSession()
     const handleLogout = async () => {
-        await signOut({ callbackUrl: '/' })
+        await signOut({ callbackUrl: '/login' })
     }
 
     return (

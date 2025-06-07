@@ -16,47 +16,49 @@ const meta: Meta<typeof TimeSelector> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {
-    render: () => {
-        const [time, setTime] = useState<Date | null>(null)
+function DefaultComponent() {
+    const [time, setTime] = useState<Date | null>(null)
 
-        return (
-            <div className="p-4">
-                <TimeSelector value={time} onChange={setTime} placeholder="Select completion time" />
-                {time && (
-                    <p className="mt-2 text-sm text-muted-foreground">Selected time: {time.toLocaleTimeString()}</p>
-                )}
-            </div>
-        )
-    },
+    return (
+        <div className="p-4">
+            <TimeSelector value={time} onChange={setTime} placeholder="Select completion time" />
+            {time && <p className="mt-2 text-sm text-muted-foreground">Selected time: {time.toLocaleTimeString()}</p>}
+        </div>
+    )
+}
+
+function WithInitialValueComponent() {
+    const initialTime = new Date()
+    initialTime.setHours(14, 30, 0, 0)
+
+    const [time, setTime] = useState<Date | null>(initialTime)
+
+    return (
+        <div className="p-4">
+            <TimeSelector value={time} onChange={setTime} placeholder="Select completion time" />
+            {time && <p className="mt-2 text-sm text-muted-foreground">Selected time: {time.toLocaleTimeString()}</p>}
+        </div>
+    )
+}
+
+function DisabledComponent() {
+    const [time, setTime] = useState<Date | null>(null)
+
+    return (
+        <div className="p-4">
+            <TimeSelector value={time} onChange={setTime} disabled={true} placeholder="Disabled time selector" />
+        </div>
+    )
+}
+
+export const Default: Story = {
+    render: () => <DefaultComponent />,
 }
 
 export const WithInitialValue: Story = {
-    render: () => {
-        const initialTime = new Date()
-        initialTime.setHours(14, 30, 0, 0)
-
-        const [time, setTime] = useState<Date | null>(initialTime)
-
-        return (
-            <div className="p-4">
-                <TimeSelector value={time} onChange={setTime} placeholder="Select completion time" />
-                {time && (
-                    <p className="mt-2 text-sm text-muted-foreground">Selected time: {time.toLocaleTimeString()}</p>
-                )}
-            </div>
-        )
-    },
+    render: () => <WithInitialValueComponent />,
 }
 
 export const Disabled: Story = {
-    render: () => {
-        const [time, setTime] = useState<Date | null>(null)
-
-        return (
-            <div className="p-4">
-                <TimeSelector value={time} onChange={setTime} disabled={true} placeholder="Disabled time selector" />
-            </div>
-        )
-    },
+    render: () => <DisabledComponent />,
 }
