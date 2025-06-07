@@ -12,14 +12,15 @@ import { Text } from 'shared/ui/Text'
 import { getMealTypeConfig } from '../../model/config'
 import { useMenuByDate, usePlanner } from '../../model/hooks'
 import { type MealWithDetails, type MenuWithMeals } from '../../model/types'
-import { type MealItemData, MealSection } from './ui'
+import { MealCreator, type MealItemData, MealSection } from './ui'
 
 interface MealTypesListProps {
     selectedDate: string
-    onMealSelect: (mealType: string) => void
+    onMealSelect: (mealId: string) => void
 }
 
 interface MealType {
+    id: string
     type: PrismaMealType
     name: string
     color: string
@@ -82,23 +83,23 @@ function calculateDayNutrition(menu: MenuWithMeals | null) {
 }
 
 export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps) {
-    const [selectedMeal, setSelectedMeal] = useState<string>('breakfast')
-    const [expandedMeals, setExpandedMeals] = useState<Set<string>>(new Set(['breakfast']))
+    const [selectedMeal, setSelectedMeal] = useState<string | null>(null)
+    const [expandedMeals, setExpandedMeals] = useState<Set<string>>(new Set())
     const { menu } = useMenuByDate(selectedDate)
     const planner = usePlanner()
 
-    const getMealData = (mealType: PrismaMealType) => {
-        const meal = menu?.meals?.find((m) => m.type === mealType)
+    const getMealData = (mealId: string) => {
+        const meal = menu?.meals?.find((m) => m.id === mealId)
         return meal || null
     }
 
-    const getMealCompletedTime = (mealType: PrismaMealType) => {
-        const meal = getMealData(mealType)
+    const getMealCompletedTime = (mealId: string) => {
+        const meal = getMealData(mealId)
         return meal?.mealTime
     }
 
-    const getMealItems = (mealType: PrismaMealType): MealItemData[] => {
-        const meal = getMealData(mealType)
+    const getMealItems = (mealId: string): MealItemData[] => {
+        const meal = getMealData(mealId)
         if (!meal) return []
 
         const items: MealItemData[] = []
@@ -149,8 +150,9 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
             })
             .map((meal) => {
                 const config = getMealTypeConfig(meal.type)
-                const items = getMealItems(meal.type)
+                const items = getMealItems(meal.id)
                 return {
+                    id: meal.id,
                     type: meal.type,
                     name: config.name,
                     color: config.color,
@@ -160,7 +162,8 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
     }
 
     const handleEditItem = async (itemId: string, amount: number) => {
-        const meal = getMealData(selectedMeal as PrismaMealType)
+        if (!selectedMeal) return
+        const meal = getMealData(selectedMeal)
         if (!meal) return
 
         const isRecipe = meal.recipes?.some((r) => r.recipeId === itemId)
@@ -169,7 +172,7 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
         if (isRecipe || isIngredient) {
             await planner.updateQuantity.mutate({
                 date: selectedDate,
-                mealType: selectedMeal as PrismaMealType,
+                mealType: meal.type,
                 itemType: isRecipe ? 'recipe' : 'ingredient',
                 itemId,
                 quantity: amount,
@@ -178,7 +181,8 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
     }
 
     const handleDeleteItem = async (itemId: string) => {
-        const meal = getMealData(selectedMeal as PrismaMealType)
+        if (!selectedMeal) return
+        const meal = getMealData(selectedMeal)
         if (!meal) return
 
         const isRecipe = meal.recipes?.some((r) => r.recipeId === itemId)
@@ -187,7 +191,7 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
         if (isRecipe || isIngredient) {
             await planner.removeItem.mutate({
                 date: selectedDate,
-                mealType: selectedMeal as PrismaMealType,
+                mealType: meal.type,
                 itemType: isRecipe ? 'recipe' : 'ingredient',
                 itemId,
             })
@@ -204,18 +208,34 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
     const handleSelectMeal = (mealId: string) => {
         setSelectedMeal(mealId)
         onMealSelect(mealId)
+
+        setExpandedMeals(new Set([mealId]))
+
+        setTimeout(() => {
+            const element = document.getElementById(`meal-${mealId}`)
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                })
+            }
+        }, 100)
     }
 
-    const handleToggleExpanded = (mealType: string) => {
+    const handleToggleExpanded = (mealId: string) => {
         setExpandedMeals((prev) => {
             const newSet = new Set(prev)
-            if (newSet.has(mealType)) {
-                newSet.delete(mealType)
+            if (newSet.has(mealId)) {
+                newSet.delete(mealId)
             } else {
-                newSet.add(mealType)
+                newSet.add(mealId)
             }
             return newSet
         })
+    }
+
+    const handleMealCreated = (mealId: string) => {
+        handleSelectMeal(mealId)
     }
 
     const dayNutrition = calculateDayNutrition(menu)
@@ -226,27 +246,28 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
                 <CardHeader>
                     <Text text="Day Nutrition" variant="title" />
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pb-6">
                     <PieChart data={dayNutrition} size={180} />
                 </CardContent>
             </Card>
             <div className="space-y-4">
                 {getUpdatedMeals().map((meal) => (
                     <MealSection
-                        key={meal.type}
+                        key={meal.id}
                         meal={meal}
-                        items={getMealItems(meal.type)}
-                        isSelected={selectedMeal === meal.type}
-                        isExpanded={expandedMeals.has(meal.type)}
-                        onSelect={() => handleSelectMeal(meal.type)}
-                        onToggleExpanded={() => handleToggleExpanded(meal.type)}
+                        items={getMealItems(meal.id)}
+                        isSelected={selectedMeal === meal.id}
+                        isExpanded={expandedMeals.has(meal.id)}
+                        onSelect={() => handleSelectMeal(meal.id)}
+                        onToggleExpanded={() => handleToggleExpanded(meal.id)}
                         onEditItem={handleEditItem}
                         onDeleteItem={handleDeleteItem}
                         onCompleteMeal={handleCompleteMeal}
-                        mealCompletedTime={getMealCompletedTime(meal.type) ?? null}
+                        mealCompletedTime={getMealCompletedTime(meal.id) ?? null}
                     />
                 ))}
             </div>
+            <MealCreator selectedDate={selectedDate} onMealCreated={handleMealCreated} />
         </div>
     )
 }

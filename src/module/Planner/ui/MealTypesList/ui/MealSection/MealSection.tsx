@@ -10,6 +10,7 @@ import { MealItem, type MealItemData } from '../MealItem/MealItem'
 import { MealTotals } from '../MealTotals/MealTotals'
 
 interface Meal {
+    id: string
     type: PrismaMealType
     name: string
     color: string
@@ -57,7 +58,8 @@ export function MealSection({
 
     return (
         <Card
-            className={`cursor-pointer transition-all ${isSelected ? 'border-primary/70 ring-1 ring-primary/70' : ''}`}
+            id={`meal-${meal.id}`}
+            className={`cursor-pointer scroll-mt-4 transition-all ${isSelected ? 'border-primary/70 ring-1 ring-primary/70' : ''}`}
             onClick={onSelect}
         >
             <CardHeader className="pb-3">
@@ -115,8 +117,15 @@ export function MealSection({
                     </div>
                 </div>
             </CardHeader>
+
+            {!isExpanded && items.length > 0 && (
+                <CardContent className="pb-6 pt-0">
+                    <MealTotals totals={totals} />
+                </CardContent>
+            )}
+
             {isExpanded && (
-                <CardContent>
+                <CardContent className="pb-6 pt-0">
                     {items.length > 0 ? (
                         <div className="space-y-4">
                             <MealTotals totals={totals} />

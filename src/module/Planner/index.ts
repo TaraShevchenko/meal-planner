@@ -1,6 +1,5 @@
 export { MealTypesList } from './ui/MealTypesList'
 export { PlannerHeader } from './ui/PlannerHeader'
 export { SearchTable } from './ui/SearchTable'
-export { plannerRouter } from './model/api'
 export * from './model/types'
 export * from './model/hooks'

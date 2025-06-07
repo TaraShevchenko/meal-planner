@@ -95,6 +95,11 @@ export type UpdateMealOrderData = {
     newSortOrder: number
 }
 
+export type CreateMealData = {
+    date: string
+    mealType: MealType
+}
+
 export type PlannerHeaderProps = {
     selectedDate: Date
     onDateChange: (date: Date) => void

@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 
+import { mealTypesConfig } from 'module/Planner/model/config'
+
 import { INGREDIENTS } from '../data/Ingredients.data'
 import { RECIPES } from '../data/Recipe.data'
 import type { SeedDayData, SeedDayPlan, SeedIngredient, SeedRecipe } from '../types'
@@ -8,16 +10,37 @@ import { createMealTime, logProgress } from '../utils'
 const prisma = new PrismaClient()
 
 /**
+ * Находит пользователя по имени
+ */
+async function findUserByName(userName: string) {
+    const user = await prisma.user.findFirst({
+        where: { name: userName },
+    })
+
+    if (!user) {
+        throw new Error(
+            `❌ Пользователь с именем "${userName}" не найден в базе данных. Создайте пользователя или укажите существующее имя.`,
+        )
+    }
+
+    console.log(`   👤 Найден пользователь: ${userName} (ID: ${user.id})`)
+    return user
+}
+
+/**
  * Универсальный шаблон сида для любого дня
  * Создает все ингредиенты, рецепты и заполняет меню для указанной даты
  */
-async function seedDayTemplate(dayData: SeedDayData, userId: string = '8fa71687-a622-4e68-bf31-0a42d37df994') {
+async function seedDayTemplate(dayData: SeedDayData, userName: string = 'Taras Shevchenko') {
     console.log(`🌟 Начало сида для дня ${dayData.dayPlan.date}`)
-    console.log(`👤 Пользователь: ${userId}`)
+    console.log(`👤 Поиск пользователя: ${userName}`)
     console.log(`📦 Общих ингредиентов: ${INGREDIENTS.length}`)
     console.log(`🍳 Общих рецептов: ${RECIPES.length}`)
 
     try {
+        // 0. Поиск пользователя
+        const user = await findUserByName(userName)
+
         // 1. Создание ингредиентов
         await seedIngredients(INGREDIENTS)
 
@@ -25,7 +48,7 @@ async function seedDayTemplate(dayData: SeedDayData, userId: string = '8fa71687-
         await seedRecipes(RECIPES)
 
         // 3. Создание меню и приемов пищи
-        await seedMenu(dayData.dayPlan, userId)
+        await seedMenu(dayData.dayPlan, user.id)
 
         console.log(`✅ Сид для дня ${dayData.dayPlan.date} успешно завершен!`)
     } catch (error) {
@@ -171,17 +194,50 @@ async function seedMenu(dayPlan: SeedDayPlan, userId: string) {
 
     console.log(`   📅 Создано меню на ${dayPlan.date}`)
 
+    // Сортируем приемы пищи по времени для правильного sortOrder при множественных приемах одного типа
+    const sortedMeals = [...dayPlan.meals].sort((a, b) => {
+        // Сначала по типу (по defaultSortOrder), затем по времени
+        const typeA = mealTypesConfig[a.type]?.defaultSortOrder ?? 999
+        const typeB = mealTypesConfig[b.type]?.defaultSortOrder ?? 999
+
+        if (typeA !== typeB) {
+            return typeA - typeB
+        }
+
+        // Если типы одинаковые, сортируем по времени
+        const timeA = a.mealTime.replace(':', '')
+        const timeB = b.mealTime.replace(':', '')
+        return parseInt(timeA) - parseInt(timeB)
+    })
+
     // Создаем приемы пищи
     let currentIndex = 0
-    for (const mealData of dayPlan.meals) {
+    const mealTypeCounters = new Map<string, number>()
+
+    for (const mealData of sortedMeals) {
         currentIndex++
-        logProgress('Приемы пищи', currentIndex, dayPlan.meals.length)
+        logProgress('Приемы пищи', currentIndex, sortedMeals.length)
+
+        // Получаем sortOrder для типа приема пищи
+        const mealConfig = mealTypesConfig[mealData.type]
+        let sortOrder = mealConfig ? mealConfig.defaultSortOrder : 0
+
+        // Если у этого типа уже есть приемы пищи, увеличиваем sortOrder
+        const typeKey = mealData.type
+        const currentCount = mealTypeCounters.get(typeKey) || 0
+        mealTypeCounters.set(typeKey, currentCount + 1)
+
+        // Для множественных приемов одного типа добавляем счетчик
+        if (currentCount > 0) {
+            sortOrder = sortOrder + currentCount * 0.1 // Добавляем дробную часть для сохранения порядка
+        }
 
         // Создаем прием пищи
         const meal = await prisma.meal.create({
             data: {
                 type: mealData.type,
                 mealTime: createMealTime(dayPlan.date, mealData.mealTime),
+                sortOrder: sortOrder,
                 menuId: menu.id,
             },
         })
@@ -265,16 +321,18 @@ async function seedMenu(dayPlan: SeedDayPlan, userId: string) {
             snack: 'Перекус',
         }
 
-        console.log(`   ✅ ${mealTypeNames[mealData.type]} создан`)
+        console.log(
+            `   ✅ ${mealTypeNames[mealData.type]} создан (sortOrder: ${sortOrder}, время: ${mealData.mealTime})`,
+        )
     }
 
-    console.log(`✅ Создано ${dayPlan.meals.length} приемов пищи`)
+    console.log(`✅ Создано ${sortedMeals.length} приемов пищи`)
 }
 
 /**
  * Экспортируемая функция запуска сида с обработкой ошибок
  */
-export async function runDaySeed(dayData: SeedDayData, userId?: string) {
+export async function runDaySeed(dayData: SeedDayData, userName?: string) {
     console.log('⚡ Вход в runDaySeed')
 
     try {
@@ -282,7 +340,7 @@ export async function runDaySeed(dayData: SeedDayData, userId?: string) {
         await prisma.$connect()
         console.log('✅ Подключение к БД успешно')
 
-        await seedDayTemplate(dayData, userId)
+        await seedDayTemplate(dayData, userName)
     } catch (e) {
         console.error('💥 Критическая ошибка при выполнении сида:', e)
         if (e instanceof Error) {

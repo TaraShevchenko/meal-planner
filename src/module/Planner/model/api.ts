@@ -2,6 +2,7 @@ import { createTRPCRouter, protectedProcedure } from 'shared/lib/trpc/trpc'
 
 import {
     addItemToMealSchema,
+    createMealSchema,
     getMenuByDateSchema,
     removeItemFromMealSchema,
     toggleMealCompletionSchema,
@@ -127,18 +128,15 @@ export const plannerRouter = createTRPCRouter({
         let meal = menu.meals.find((m) => m.type === mealType)
 
         if (!meal) {
-            const mealTypeOrder = {
-                breakfast: 0,
-                lunch: 1,
-                dinner: 2,
-                snack: 3,
-            }
+            // Определяем sortOrder как последний элемент в списке (единообразно с createMeal)
+            const maxSortOrder = menu.meals.length > 0 ? Math.max(...menu.meals.map((m) => m.sortOrder)) : -1
 
             meal = await ctx.db.meal.create({
                 data: {
                     type: mealType,
                     menuId: menu.id,
-                    sortOrder: mealTypeOrder[mealType] || 0,
+                    sortOrder: maxSortOrder + 1,
+                    // mealTime НЕ устанавливается - это поле для отметки выполнения приема пищи
                 },
             })
         }
@@ -544,6 +542,99 @@ export const plannerRouter = createTRPCRouter({
         return {
             status: 200,
             data: {
+                menu: updatedMenu,
+            },
+        }
+    }),
+
+    createMeal: protectedProcedure.input(createMealSchema).mutation(async ({ ctx, input }) => {
+        const { date, mealType } = input
+        const menuDate = new Date(`${date}T12:00:00.000Z`)
+
+        let menu = await ctx.db.menu.findFirst({
+            where: {
+                date: {
+                    gte: new Date(`${date}T00:00:00.000Z`),
+                    lte: new Date(`${date}T23:59:59.999Z`),
+                },
+                userId: ctx.session.user.id,
+            },
+            include: {
+                meals: true,
+            },
+        })
+
+        if (!menu) {
+            menu = await ctx.db.menu.create({
+                data: {
+                    date: menuDate,
+                    userId: ctx.session.user.id,
+                },
+                include: {
+                    meals: true,
+                },
+            })
+        }
+
+        const existingMeal = menu.meals.find((m) => m.type === mealType)
+        if (existingMeal) {
+            return {
+                status: 200,
+                data: {
+                    mealId: existingMeal.id,
+                    message: 'Meal already exists',
+                },
+            }
+        }
+
+        // Определяем sortOrder как последний элемент в списке
+        const maxSortOrder = menu.meals.length > 0 ? Math.max(...menu.meals.map((m) => m.sortOrder)) : -1
+
+        const meal = await ctx.db.meal.create({
+            data: {
+                type: mealType,
+                menuId: menu.id,
+                sortOrder: maxSortOrder + 1,
+                // mealTime НЕ устанавливается - это поле для отметки выполнения приема пищи
+            },
+        })
+
+        const updatedMenu = await ctx.db.menu.findFirst({
+            where: {
+                id: menu.id,
+                userId: ctx.session.user.id,
+            },
+            include: {
+                meals: {
+                    include: {
+                        recipes: {
+                            include: {
+                                recipe: {
+                                    include: {
+                                        ingredients: {
+                                            include: {
+                                                ingredient: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        ingredients: {
+                            include: {
+                                ingredient: true,
+                            },
+                        },
+                    },
+                    orderBy: [{ mealTime: { sort: 'asc', nulls: 'last' } }, { sortOrder: 'asc' }],
+                },
+            },
+        })
+
+        return {
+            status: 200,
+            data: {
+                mealId: meal.id,
                 menu: updatedMenu,
             },
         }

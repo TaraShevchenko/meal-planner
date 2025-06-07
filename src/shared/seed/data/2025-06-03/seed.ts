@@ -5,14 +5,14 @@ const dayData: SeedDayData = {
     dayPlan: PLAN,
 }
 
-export async function runDay20250603Seed(userId?: string) {
+export async function runDay20250603Seed(userName?: string) {
     console.log('🚀 Запуск сида для дня 2025-06-03...')
     console.log('📊 Данные для сида:')
     console.log(`   - Приемов пищи: ${dayData.dayPlan.meals.length}`)
     console.log(`   - Дата: ${dayData.dayPlan.date}`)
 
     try {
-        await runDaySeed(dayData, userId)
+        await runDaySeed(dayData, userName)
         console.log('🎉 Сид успешно выполнен!')
     } catch (error) {
         console.error('💥 Ошибка в runDay20250603Seed:', error)
