@@ -6,6 +6,7 @@ import {
     removeItemFromMealSchema,
     toggleMealCompletionSchema,
     updateItemQuantitySchema,
+    updateMealOrderSchema,
 } from './schemes'
 
 export const plannerRouter = createTRPCRouter({
@@ -81,6 +82,7 @@ export const plannerRouter = createTRPCRouter({
                             },
                         },
                     },
+                    orderBy: [{ mealTime: { sort: 'asc', nulls: 'last' } }, { sortOrder: 'asc' }],
                 },
             },
         })
@@ -125,10 +127,18 @@ export const plannerRouter = createTRPCRouter({
         let meal = menu.meals.find((m) => m.type === mealType)
 
         if (!meal) {
+            const mealTypeOrder = {
+                breakfast: 0,
+                lunch: 1,
+                dinner: 2,
+                snack: 3,
+            }
+
             meal = await ctx.db.meal.create({
                 data: {
                     type: mealType,
                     menuId: menu.id,
+                    sortOrder: mealTypeOrder[mealType] || 0,
                 },
             })
         }
@@ -452,6 +462,81 @@ export const plannerRouter = createTRPCRouter({
                             },
                         },
                     },
+                },
+            },
+        })
+
+        return {
+            status: 200,
+            data: {
+                menu: updatedMenu,
+            },
+        }
+    }),
+
+    updateMealOrder: protectedProcedure.input(updateMealOrderSchema).mutation(async ({ ctx, input }) => {
+        const { date, mealType, newSortOrder } = input
+
+        const menu = await ctx.db.menu.findFirst({
+            where: {
+                date: {
+                    gte: new Date(`${date}T00:00:00.000Z`),
+                    lte: new Date(`${date}T23:59:59.999Z`),
+                },
+                userId: ctx.session.user.id,
+            },
+            include: {
+                meals: true,
+            },
+        })
+
+        if (!menu) {
+            throw new Error('Menu not found')
+        }
+
+        const meal = menu.meals.find((m) => m.type === mealType)
+
+        if (!meal) {
+            throw new Error('Meal not found')
+        }
+
+        await ctx.db.meal.update({
+            where: {
+                id: meal.id,
+            },
+            data: {
+                sortOrder: newSortOrder,
+            },
+        })
+
+        const updatedMenu = await ctx.db.menu.findFirst({
+            where: {
+                id: menu.id,
+                userId: ctx.session.user.id,
+            },
+            include: {
+                meals: {
+                    include: {
+                        recipes: {
+                            include: {
+                                recipe: {
+                                    include: {
+                                        ingredients: {
+                                            include: {
+                                                ingredient: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        ingredients: {
+                            include: {
+                                ingredient: true,
+                            },
+                        },
+                    },
+                    orderBy: [{ mealTime: { sort: 'asc', nulls: 'last' } }, { sortOrder: 'asc' }],
                 },
             },
         })

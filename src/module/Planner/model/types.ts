@@ -1,93 +1,101 @@
-import {
-    type Ingredients,
-    type Meal,
-    type MealToIngredients,
-    type MealToRecipe,
-    type Menu,
-    type MealType as PrismaMealType,
-    type Recipe,
-    type RecipeToIngredients,
-} from '@prisma/client'
+import { type MealType, type Prisma } from '@prisma/client'
 
-export interface MealType {
+export type MealWithDetails = Prisma.MealGetPayload<{
+    include: {
+        recipes: {
+            include: {
+                recipe: {
+                    include: {
+                        ingredients: {
+                            include: {
+                                ingredient: true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ingredients: {
+            include: {
+                ingredient: true
+            }
+        }
+    }
+}>
+
+export type MenuWithMeals = Prisma.MenuGetPayload<{
+    include: {
+        meals: {
+            include: {
+                recipes: {
+                    include: {
+                        recipe: {
+                            include: {
+                                ingredients: {
+                                    include: {
+                                        ingredient: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                ingredients: {
+                    include: {
+                        ingredient: true
+                    }
+                }
+            }
+        }
+    }
+}>
+
+export type MealItemData = {
     id: string
+    type: 'ingredient' | 'recipe'
+    name: string
+    amount: number
+    unit: string
+    calories: number
+    protein: number
+    fat: number
+    carbs: number
+}
+
+export type MealTypeConfig = {
+    type: string
     name: string
     color: string
-    items: number
+    defaultSortOrder: number
 }
 
-export interface PlannerHeaderProps {
-    selectedDate: Date
-    onDateChange: (date: Date) => void
-}
-
-// API Types
-export type Ingredient = Ingredients
-
-export type RecipeWithIngredients = Recipe & {
-    ingredients: (RecipeToIngredients & {
-        ingredient: Ingredients
-    })[]
-}
-
-export interface GetIngredientsResponse {
-    status: number
-    data: {
-        ingredients: Ingredient[]
-    }
-}
-
-export interface GetRecipesResponse {
-    status: number
-    data: {
-        recipes: RecipeWithIngredients[]
-    }
-}
-
-// Menu and Meal Types
-export type MealWithDetails = Meal & {
-    recipes: (MealToRecipe & {
-        recipe: RecipeWithIngredients
-    })[]
-    ingredients: (MealToIngredients & {
-        ingredient: Ingredients
-    })[]
-}
-
-export type MenuWithMeals = Menu & {
-    meals: MealWithDetails[]
-}
-
-export interface GetMenuByDateResponse {
-    status: number
-    data: {
-        menu: MenuWithMeals | null
-    }
-}
-
-export interface CreateOrUpdateMenuResponse {
-    status: number
-    data: {
-        menu: MenuWithMeals
-    }
-}
-
-export interface AddItemToMealData {
+export type AddItemToMealData = {
     date: string
-    mealType: PrismaMealType
+    mealType: MealType
     itemType: 'recipe' | 'ingredient'
     itemId: string
     quantity: number
 }
 
-export interface RemoveItemFromMealData {
+export type RemoveItemFromMealData = {
     date: string
-    mealType: PrismaMealType
+    mealType: MealType
     itemType: 'recipe' | 'ingredient'
     itemId: string
 }
 
-export interface ToggleMealCompletionData {
+export type ToggleMealCompletionData = {
     date: string
-    mealType: PrismaMealType
+    mealType: MealType
+}
+
+export type UpdateMealOrderData = {
+    date: string
+    mealType: MealType
+    newSortOrder: number
+}
+
+export type PlannerHeaderProps = {
+    selectedDate: Date
+    onDateChange: (date: Date) => void
 }

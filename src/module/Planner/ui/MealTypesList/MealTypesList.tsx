@@ -9,6 +9,7 @@ import { Card } from 'shared/ui/Card'
 import { PieChart } from 'shared/ui/PieChart'
 import { Text } from 'shared/ui/Text'
 
+import { getMealTypeConfig } from '../../model/config'
 import { useMenuByDate, usePlanner } from '../../model/hooks'
 import { type MealWithDetails, type MenuWithMeals } from '../../model/types'
 import { type MealItemData, MealSection } from './ui'
@@ -24,13 +25,6 @@ interface MealType {
     color: string
     items: number
 }
-
-const mealTypes: MealType[] = [
-    { type: 'breakfast', name: 'Breakfast', color: 'bg-orange-500', items: 0 },
-    { type: 'lunch', name: 'Lunch', color: 'bg-blue-500', items: 0 },
-    { type: 'dinner', name: 'Dinner', color: 'bg-blue-600', items: 0 },
-    { type: 'snack', name: 'Snack', color: 'bg-purple-500', items: 0 },
-]
 
 function calculateMealNutrition(meal: Partial<MealWithDetails>) {
     let totalCalories = 0
@@ -89,6 +83,7 @@ function calculateDayNutrition(menu: MenuWithMeals | null) {
 
 export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps) {
     const [selectedMeal, setSelectedMeal] = useState<string>('breakfast')
+    const [expandedMeals, setExpandedMeals] = useState<Set<string>>(new Set(['breakfast']))
     const { menu } = useMenuByDate(selectedDate)
     const planner = usePlanner()
 
@@ -141,13 +136,27 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
     }
 
     const getUpdatedMeals = (): MealType[] => {
-        return mealTypes.map((mealType) => {
-            const items = getMealItems(mealType.type)
-            return {
-                ...mealType,
-                items: items.length,
-            }
-        })
+        if (!menu?.meals) return []
+
+        return menu.meals
+            .sort((a, b) => {
+                if (a.mealTime && b.mealTime) {
+                    return a.mealTime.getTime() - b.mealTime.getTime()
+                }
+                if (a.mealTime && !b.mealTime) return -1
+                if (!a.mealTime && b.mealTime) return 1
+                return a.sortOrder - b.sortOrder
+            })
+            .map((meal) => {
+                const config = getMealTypeConfig(meal.type)
+                const items = getMealItems(meal.type)
+                return {
+                    type: meal.type,
+                    name: config.name,
+                    color: config.color,
+                    items: items.length,
+                }
+            })
     }
 
     const handleEditItem = async (itemId: string, amount: number) => {
@@ -197,6 +206,18 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
         onMealSelect(mealId)
     }
 
+    const handleToggleExpanded = (mealType: string) => {
+        setExpandedMeals((prev) => {
+            const newSet = new Set(prev)
+            if (newSet.has(mealType)) {
+                newSet.delete(mealType)
+            } else {
+                newSet.add(mealType)
+            }
+            return newSet
+        })
+    }
+
     const dayNutrition = calculateDayNutrition(menu)
 
     return (
@@ -216,7 +237,9 @@ export function MealTypesList({ selectedDate, onMealSelect }: MealTypesListProps
                         meal={meal}
                         items={getMealItems(meal.type)}
                         isSelected={selectedMeal === meal.type}
+                        isExpanded={expandedMeals.has(meal.type)}
                         onSelect={() => handleSelectMeal(meal.type)}
+                        onToggleExpanded={() => handleToggleExpanded(meal.type)}
                         onEditItem={handleEditItem}
                         onDeleteItem={handleDeleteItem}
                         onCompleteMeal={handleCompleteMeal}

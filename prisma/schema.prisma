@@ -32,9 +32,10 @@ model Recipe {
 }
 
 model Meal {
-    id       String    @id @default(uuid())
-    mealTime DateTime?
-    type     MealType
+    id        String    @id @default(uuid())
+    mealTime  DateTime?
+    type      MealType
+    sortOrder Int       @default(0)
 
     recipes     MealToRecipe[]
     ingredients MealToIngredients[]

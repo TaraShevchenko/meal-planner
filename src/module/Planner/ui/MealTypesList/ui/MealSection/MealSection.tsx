@@ -1,5 +1,5 @@
 import { type MealType as PrismaMealType } from '@prisma/client'
-import { Check, X } from 'lucide-react'
+import { Check, ChevronDown, ChevronRight, X } from 'lucide-react'
 
 import { Badge } from 'shared/ui/Badge'
 import { Button } from 'shared/ui/Button'
@@ -20,7 +20,9 @@ interface MealSectionProps {
     meal: Meal
     items: MealItemData[]
     isSelected: boolean
+    isExpanded: boolean
     onSelect: () => void
+    onToggleExpanded: () => void
     onEditItem: (type: string, amount: number) => void
     onDeleteItem: (type: string) => void
     onCompleteMeal: (type: PrismaMealType) => void
@@ -31,7 +33,9 @@ export function MealSection({
     meal,
     items,
     isSelected,
+    isExpanded,
     onSelect,
+    onToggleExpanded,
     onEditItem,
     onDeleteItem,
     onCompleteMeal,
@@ -59,6 +63,15 @@ export function MealSection({
             <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                onToggleExpanded()
+                            }}
+                            className="flex h-6 w-6 items-center justify-center rounded transition-colors hover:bg-muted"
+                        >
+                            {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        </button>
                         <div className={`h-3 w-3 rounded-full ${meal.color}`} />
                         <CardTitle className="text-lg">{meal.name}</CardTitle>
                     </div>
@@ -102,20 +115,22 @@ export function MealSection({
                     </div>
                 </div>
             </CardHeader>
-            <CardContent>
-                {items.length > 0 ? (
-                    <div className="space-y-4">
-                        <MealTotals totals={totals} />
-                        <div className="space-y-2">
-                            {items.map((item) => (
-                                <MealItem key={item.id} item={item} onEdit={onEditItem} onDelete={onDeleteItem} />
-                            ))}
+            {isExpanded && (
+                <CardContent>
+                    {items.length > 0 ? (
+                        <div className="space-y-4">
+                            <MealTotals totals={totals} />
+                            <div className="space-y-2">
+                                {items.map((item) => (
+                                    <MealItem key={item.id} item={item} onEdit={onEditItem} onDelete={onDeleteItem} />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ) : (
-                    <div className="mb-4 text-center text-muted-foreground">No meals added yet</div>
-                )}
-            </CardContent>
+                    ) : (
+                        <div className="mb-4 text-center text-muted-foreground">No meals added yet</div>
+                    )}
+                </CardContent>
+            )}
         </Card>
     )
 }
