@@ -159,7 +159,7 @@ export const plannerRouter = createTRPCRouter({
                     servings: quantity,
                 },
             })
-        } else {
+        } else if (itemType === 'ingredient') {
             await ctx.db.mealToIngredients.upsert({
                 where: {
                     mealId_ingredientId: {
@@ -173,6 +173,23 @@ export const plannerRouter = createTRPCRouter({
                 create: {
                     mealId: meal.id,
                     ingredientId: itemId,
+                    quantity,
+                },
+            })
+        } else if (itemType === 'unplannedMeal') {
+            await ctx.db.mealToUnplannedMeal.upsert({
+                where: {
+                    mealId_unplannedMealId: {
+                        mealId: meal.id,
+                        unplannedMealId: itemId,
+                    },
+                },
+                update: {
+                    quantity,
+                },
+                create: {
+                    mealId: meal.id,
+                    unplannedMealId: itemId,
                     quantity,
                 },
             })

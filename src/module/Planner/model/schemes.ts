@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const mealTypeEnum = z.enum(['breakfast', 'lunch', 'dinner', 'snack'])
 
-export const itemTypeEnum = z.enum(['recipe', 'ingredient'])
+export const itemTypeEnum = z.enum(['recipe', 'ingredient', 'unplannedMeal'])
 
 export const getMenuByDateSchema = z.object({
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format'),

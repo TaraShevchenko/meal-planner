@@ -20,6 +20,11 @@ export type MealWithDetails = Prisma.MealGetPayload<{
                 ingredient: true
             }
         }
+        unplannedMeals: {
+            include: {
+                unplannedMeal: true
+            }
+        }
     }
 }>
 
@@ -45,6 +50,11 @@ export type MenuWithMeals = Prisma.MenuGetPayload<{
                         ingredient: true
                     }
                 }
+                unplannedMeals: {
+                    include: {
+                        unplannedMeal: true
+                    }
+                }
             }
         }
     }
@@ -52,7 +62,7 @@ export type MenuWithMeals = Prisma.MenuGetPayload<{
 
 export type MealItemData = {
     id: string
-    type: 'ingredient' | 'recipe'
+    type: 'ingredient' | 'recipe' | 'unplannedMeal'
     name: string
     amount: number
     unit: string
@@ -72,7 +82,7 @@ export type MealTypeConfig = {
 export type AddItemToMealData = {
     date: string
     mealType: MealType
-    itemType: 'recipe' | 'ingredient'
+    itemType: 'recipe' | 'ingredient' | 'unplannedMeal'
     itemId: string
     quantity: number
 }
@@ -80,7 +90,7 @@ export type AddItemToMealData = {
 export type RemoveItemFromMealData = {
     date: string
     mealType: MealType
-    itemType: 'recipe' | 'ingredient'
+    itemType: 'recipe' | 'ingredient' | 'unplannedMeal'
     itemId: string
 }
 

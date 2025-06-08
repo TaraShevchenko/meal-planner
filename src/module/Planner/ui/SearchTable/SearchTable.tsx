@@ -29,15 +29,17 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
     const { data: ingredientsData, isLoading: isLoadingIngredients } = api.planner.getIngredients.useQuery()
     const { data: recipesData, isLoading: isLoadingRecipes } = api.planner.getRecipes.useQuery()
     const { data: unplannedMealsData, isLoading: isLoadingUnplannedMeals } = api.unplannedMeal.getAll.useQuery()
-    const { menu } = useMenuByDate(selectedDate)
+
+    const { data: mealData } = api.planner.getMenuByDate.useQuery({ date: selectedDate })
     const planner = usePlanner()
 
+    const menu = mealData?.data?.menu
     const selectedMealData = menu?.meals?.find((meal) => meal.id === selectedMeal)
     const mealType = selectedMealData?.type
 
     const ingredients = ingredientsData?.data?.ingredients ?? []
     const recipes = recipesData?.data?.recipes ?? []
-    const unplannedMeals = unplannedMealsData?.data?.unplannedMeals ?? []
+    const unplannedMeals = unplannedMealsData ?? []
 
     const filteredIngredients = ingredients.filter((ingredient) =>
         ingredient.name.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -52,10 +54,11 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
     const isLoading = isLoadingIngredients || isLoadingRecipes || isLoadingUnplannedMeals
 
     const handleAddIngredient = async (ingredientId: string) => {
-        if (!selectedMeal) return
+        if (!selectedMeal || !mealType) return
         try {
-            await planner.addItemById.mutate({
-                mealId: selectedMeal,
+            await planner.addItem.mutate({
+                date: selectedDate,
+                mealType: mealType,
                 itemType: 'ingredient',
                 itemId: ingredientId,
                 quantity: 100,
@@ -66,10 +69,11 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
     }
 
     const handleAddRecipe = async (recipeId: string) => {
-        if (!selectedMeal) return
+        if (!selectedMeal || !mealType) return
         try {
-            await planner.addItemById.mutate({
-                mealId: selectedMeal,
+            await planner.addItem.mutate({
+                date: selectedDate,
+                mealType: mealType,
                 itemType: 'recipe',
                 itemId: recipeId,
                 quantity: 1,
@@ -80,10 +84,11 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
     }
 
     const handleAddUnplannedMeal = async (unplannedMealId: string) => {
-        if (!selectedMeal) return
+        if (!selectedMeal || !mealType) return
         try {
-            await planner.addItemById.mutate({
-                mealId: selectedMeal,
+            await planner.addItem.mutate({
+                date: selectedDate,
+                mealType: mealType,
                 itemType: 'unplannedMeal',
                 itemId: unplannedMealId,
                 quantity: 1,
@@ -109,19 +114,19 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
                                 text={'Ingredients'}
                                 variant={activeTab === 'ingredients' ? 'default' : 'outline'}
                                 onClick={() => setActiveTab('ingredients')}
-                                disabled={planner.addItemById.isLoading}
+                                disabled={planner.addItem.isLoading}
                             />
                             <Button
                                 text={'Recipes'}
                                 variant={activeTab === 'recipes' ? 'default' : 'outline'}
                                 onClick={() => setActiveTab('recipes')}
-                                disabled={planner.addItemById.isLoading}
+                                disabled={planner.addItem.isLoading}
                             />
                             <Button
                                 text={'Quick Add'}
                                 variant={activeTab === 'unplannedMeals' ? 'default' : 'outline'}
                                 onClick={() => setActiveTab('unplannedMeals')}
-                                disabled={planner.addItemById.isLoading}
+                                disabled={planner.addItem.isLoading}
                             />
                         </div>
                     </div>
@@ -138,7 +143,7 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
                                 }...`,
                                 value: searchTerm,
                                 onChange: (e) => setSearchTerm(e.target.value),
-                                disabled: isLoading || planner.addItemById.isLoading,
+                                disabled: isLoading || planner.addItem.isLoading,
                             }}
                             leftIcon={Search}
                         />
@@ -148,7 +153,7 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => setIsCreateFormOpen(true)}
-                                disabled={planner.addItemById.isLoading}
+                                disabled={planner.addItem.isLoading}
                             />
                         )}
                     </div>
@@ -184,7 +189,7 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => handleAddIngredient(ingredient.id)}
-                                                        disabled={planner.addItemById.isLoading || !selectedMeal}
+                                                        disabled={planner.addItem.isLoading || !selectedMeal}
                                                     />
                                                 </TableCellWithChildren>
                                             </TableRow>
@@ -217,7 +222,7 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => handleAddRecipe(recipe.id)}
-                                                        disabled={planner.addItemById.isLoading || !selectedMeal}
+                                                        disabled={planner.addItem.isLoading || !selectedMeal}
                                                     />
                                                 </TableCellWithChildren>
                                             </TableRow>
@@ -237,7 +242,7 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {filteredUnplannedMeals.map((meal) => (
+                                        {filteredUnplannedMeals.map((meal: any) => (
                                             <TableRow key={meal.id}>
                                                 <TableCell text={meal.name} />
                                                 <TableCell text={`${meal.calories}kcal`} />
@@ -250,7 +255,7 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => handleAddUnplannedMeal(meal.id)}
-                                                        disabled={planner.addItemById.isLoading || !selectedMeal}
+                                                        disabled={planner.addItem.isLoading || !selectedMeal}
                                                     />
                                                 </TableCellWithChildren>
                                             </TableRow>
@@ -270,9 +275,9 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
                             </div>
                         )}
 
-                    {planner.addItemById.error && (
+                    {planner.addItem.error && (
                         <div className="mt-2 rounded border border-red-300 bg-red-100 p-2 text-red-700">
-                            Error adding: {planner.addItemById.error.message}
+                            Error adding: {planner.addItem.error.message}
                         </div>
                     )}
                 </CardContent>
