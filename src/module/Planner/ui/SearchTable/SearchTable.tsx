@@ -39,7 +39,7 @@ export function SearchTable({ selectedMeal, selectedDate }: SearchTableProps) {
 
     const ingredients = ingredientsData?.data?.ingredients ?? []
     const recipes = recipesData?.data?.recipes ?? []
-    const unplannedMeals = unplannedMealsData ?? []
+    const unplannedMeals = unplannedMealsData?.data?.unplannedMeals ?? []
 
     const filteredIngredients = ingredients.filter((ingredient) =>
         ingredient.name.toLowerCase().includes(searchTerm.toLowerCase()),
