@@ -1,12 +1,14 @@
-import { db } from 'shared/lib/prisma'
+import { PrismaClient } from '@prisma/client'
 
 import { UNPLANNED_MEALS } from './data/UnplannedMeals.data'
+
+const prisma = new PrismaClient()
 
 export async function seedUnplannedMeals() {
     console.log('🌱 Seeding unplanned meals...')
 
     for (const meal of UNPLANNED_MEALS) {
-        await db.unplannedMeal.upsert({
+        await prisma.unplannedMeal.upsert({
             where: { name: meal.name },
             update: meal,
             create: meal,
@@ -15,3 +17,12 @@ export async function seedUnplannedMeals() {
 
     console.log('✅ Unplanned meals seeded successfully')
 }
+
+seedUnplannedMeals()
+    .catch((e) => {
+        console.error('❌ Critical error during unplanned meals seeding:', e)
+        process.exit(1)
+    })
+    .finally(() => {
+        prisma.$disconnect()
+    })

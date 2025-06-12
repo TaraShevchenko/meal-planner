@@ -22,7 +22,7 @@ model Ingredients {
 
 model Recipe {
   id          String                @id @default(uuid())
-  name        String
+  name        String                @unique
   meals       MealToRecipe[]
   ingredients RecipeToIngredients[]
 
