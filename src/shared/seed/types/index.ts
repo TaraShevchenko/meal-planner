@@ -11,11 +11,18 @@ type MealRecipe = {
     grams?: number
 }
 
+type MealUnplannedMeal = {
+    unplannedMealName: string
+    servings?: number
+    grams?: number
+}
+
 export type Meal = {
     type: MealType
     mealTime: string
     ingredients: MealIngredient[]
     recipes: MealRecipe[]
+    unplannedMeals: MealUnplannedMeal[]
 }
 
 export type SeedIngredient = Omit<Ingredients, 'id'>

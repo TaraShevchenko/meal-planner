@@ -1,149 +1,169 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Ingredients {
-    id       String @id @default(uuid())
-    name     String @unique
-    calories Float
-    protein  Float
-    carbs    Float
-    fat      Float
+  id       String                @id @default(uuid())
+  name     String                @unique
+  calories Float
+  protein  Float
+  carbs    Float
+  fat      Float
+  meals    MealToIngredients[]
+  recipes  RecipeToIngredients[]
 
-    recipes RecipeToIngredients[]
-    meals   MealToIngredients[]
-
-    @@map("ingredients")
+  @@map("ingredients")
 }
 
 model Recipe {
-    id   String @id @default(uuid())
-    name String
+  id          String                @id @default(uuid())
+  name        String                @unique
+  meals       MealToRecipe[]
+  ingredients RecipeToIngredients[]
 
-    ingredients RecipeToIngredients[]
-    meals       MealToRecipe[]
-
-    @@map("recipes")
+  @@map("recipes")
 }
 
 model Meal {
-    id        String    @id @default(uuid())
-    mealTime  DateTime?
-    type      MealType
-    sortOrder Int       @default(0)
+  id                  String                @id @default(uuid())
+  mealTime            DateTime?
+  type                MealType
+  menuId              String?
+  sortOrder           Int                   @default(0)
+  ingredients         MealToIngredients[]
+  recipes             MealToRecipe[]
+  MealToUnplannedMeal MealToUnplannedMeal[]
+  menu                Menu?                 @relation(fields: [menuId], references: [id])
 
-    recipes     MealToRecipe[]
-    ingredients MealToIngredients[]
-    menu        Menu?               @relation(fields: [menuId], references: [id])
-    menuId      String?
-
-    @@map("meals")
+  @@map("meals")
 }
 
 model Menu {
-    id   String   @id @default(uuid())
-    date DateTime
+  id     String   @id @default(uuid())
+  date   DateTime
+  userId String
+  meals  Meal[]
+  User   User     @relation(fields: [userId], references: [id])
 
-    meals  Meal[]
-    User   User   @relation(fields: [userId], references: [id])
-    userId String
-
-    @@map("menus")
+  @@map("menus")
 }
 
 model RecipeToIngredients {
-    recipe       Recipe      @relation(fields: [recipeId], references: [id])
-    recipeId     String
-    ingredient   Ingredients @relation(fields: [ingredientId], references: [id])
-    ingredientId String
-    quantity     Float
+  recipeId     String
+  ingredientId String
+  quantity     Float
+  ingredient   Ingredients @relation(fields: [ingredientId], references: [id])
+  recipe       Recipe      @relation(fields: [recipeId], references: [id])
 
-    @@id([recipeId, ingredientId])
-    @@map("recipe_ingredients")
+  @@id([recipeId, ingredientId])
+  @@map("recipe_ingredients")
 }
 
 model MealToRecipe {
-    meal     Meal   @relation(fields: [mealId], references: [id])
-    mealId   String
-    recipe   Recipe @relation(fields: [recipeId], references: [id])
-    recipeId String
-    servings Float
+  mealId   String
+  recipeId String
+  servings Float
+  meal     Meal   @relation(fields: [mealId], references: [id])
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
 
-    @@id([mealId, recipeId])
-    @@map("meal_recipes")
+  @@id([mealId, recipeId])
+  @@map("meal_recipes")
 }
 
 model MealToIngredients {
-    meal         Meal        @relation(fields: [mealId], references: [id])
-    mealId       String
-    ingredient   Ingredients @relation(fields: [ingredientId], references: [id])
-    ingredientId String
-    quantity     Float
+  mealId       String
+  ingredientId String
+  quantity     Float
+  ingredient   Ingredients @relation(fields: [ingredientId], references: [id])
+  meal         Meal        @relation(fields: [mealId], references: [id])
 
-    @@id([mealId, ingredientId])
-    @@map("meal_ingredients")
+  @@id([mealId, ingredientId])
+  @@map("meal_ingredients")
 }
 
-enum MealType {
-    breakfast
-    lunch
-    dinner
-    snack
+model UnplannedMeal {
+  id       String                @id @default(uuid())
+  name     String                @unique
+  calories Float
+  protein  Float
+  carbs    Float
+  fat      Float
+  meals    MealToUnplannedMeal[]
+
+  @@map("unplanned_meals")
 }
 
-enum Role {
-    USER
-    ADMIN
+model MealToUnplannedMeal {
+  mealId          String
+  unplannedMealId String
+  quantity        Float
+  meal            Meal          @relation(fields: [mealId], references: [id])
+  unplannedMeal   UnplannedMeal @relation(fields: [unplannedMealId], references: [id])
+
+  @@id([mealId, unplannedMealId])
+  @@map("meal_unplanned_meals")
 }
 
 model User {
-    id            String    @id @default(uuid())
-    name          String?
-    email         String?   @unique
-    password      String?
-    emailVerified DateTime?
-    image         String?
-    role          Role      @default(USER)
-    accounts      Account[]
-    sessions      Session[]
-    menus         Menu[]
+  id            String    @id @default(uuid())
+  name          String?
+  email         String?   @unique
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(USER)
+  accounts      Account[]
+  sessions      Session[]
+  menus         Menu[]
 }
 
 model Account {
-    id                String  @id @default(uuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String?
-    access_token      String?
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String?
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
 }
 
 model Session {
-    id           String   @id @default(uuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
+}
+
+enum MealType {
+  breakfast
+  lunch
+  dinner
+  snack
+}
+
+enum Role {
+  USER
+  ADMIN
 }

@@ -1,4 +1,5 @@
 import { authRouter } from 'core/Auth'
+import { unplannedMealRouter } from 'core/UnplannedMeal/server'
 
 import { orderRouter } from 'module/Order/server'
 import { plannerRouter } from 'module/Planner/server'
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
     user: userRouter,
     planner: plannerRouter,
     order: orderRouter,
+    unplannedMeal: unplannedMealRouter,
 })
 
 // export type definition of API

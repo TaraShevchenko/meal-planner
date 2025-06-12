@@ -9,18 +9,20 @@ type Recipe = {
 }
 
 export const RECIPE_NAMES = {
-    // 2025-06-02
-    CHICKEN_FILLET_IN_SAUCE: 'Куряче філе в соусі',
-    SALAD_WITH_CORN_AVOCADO_AND_BELL_PEPPER: 'Салат з кукурудзою, авокадо та солодким перцем',
-    ICE_LATTE_COFFEE_BOSS: 'Холодний латте Coffee Boss',
-    //
     OMLET: 'Омлет',
     COFFEE_IN_A_CEZVE: 'Кава в турці (домашня)',
     COTTAGE_CHEESE_WITH_SOUR_CREAM_AND_SUGAR: 'Творог з сметаною та цукром',
+    SEMOLINA_PORRIDGE_WITH_KIWI: 'Манна каша з ківі',
+
+    SALAD_WITH_CORN_AVOCADO_AND_BELL_PEPPER: 'Салат з кукурудзою, авокадо та солодким перцем',
+    SALAD_WITH_FETA_AND_BEETROOT: 'Салат з фетою та буряком',
+
+    CHICKEN_FILLET_IN_SAUCE: 'Куряче філе в соусі',
+    CHICKEN_IN_SOY_SAUCE: 'Курка в соевому соусе',
+    CHICKEN_IN_SOUR_CREAM_SAUCE: 'Курка в сметанном соусе',
 } as const
 
 export const RECIPES: Recipe[] = [
-    // 2025-06-02
     {
         name: RECIPE_NAMES.CHICKEN_FILLET_IN_SAUCE,
         ingredients: [
@@ -43,15 +45,6 @@ export const RECIPES: Recipe[] = [
         ],
     },
     {
-        name: RECIPE_NAMES.ICE_LATTE_COFFEE_BOSS,
-        ingredients: [
-            { ingredientName: INGREDIENT_NAMES.MILK, quantity: 300 },
-            { ingredientName: INGREDIENT_NAMES.COFFEE_SYRUP, quantity: 10 },
-            { ingredientName: INGREDIENT_NAMES.ESPRESSO, quantity: 30 },
-        ],
-    },
-    // 2025-06-03
-    {
         name: RECIPE_NAMES.OMLET,
         ingredients: [
             { ingredientName: INGREDIENT_NAMES.EGGS, quantity: 240 },
@@ -73,6 +66,69 @@ export const RECIPES: Recipe[] = [
             { ingredientName: INGREDIENT_NAMES.COTTAGE_CHEESE, quantity: 175 },
             { ingredientName: INGREDIENT_NAMES.SOUR_CREAM, quantity: 50 },
             { ingredientName: INGREDIENT_NAMES.SUGAR, quantity: 25 },
+        ],
+    },
+    {
+        name: RECIPE_NAMES.SEMOLINA_PORRIDGE_WITH_KIWI,
+        ingredients: [
+            { ingredientName: INGREDIENT_NAMES.MILK, quantity: 300 },
+            { ingredientName: INGREDIENT_NAMES.BUTTER, quantity: 45 },
+            { ingredientName: INGREDIENT_NAMES.SEMOLINA, quantity: 35 },
+            { ingredientName: INGREDIENT_NAMES.SUGAR, quantity: 20 },
+            { ingredientName: INGREDIENT_NAMES.SALT, quantity: 3 },
+            { ingredientName: INGREDIENT_NAMES.KIWI, quantity: 100 },
+        ],
+    },
+    {
+        name: RECIPE_NAMES.SALAD_WITH_FETA_AND_BEETROOT,
+        ingredients: [
+            {
+                ingredientName: INGREDIENT_NAMES.FETA_CHEESE,
+                quantity: 60,
+            },
+            {
+                ingredientName: INGREDIENT_NAMES.BEETROOT,
+                quantity: 300,
+            },
+        ],
+    },
+    {
+        name: RECIPE_NAMES.CHICKEN_IN_SOY_SAUCE,
+        ingredients: [
+            { ingredientName: INGREDIENT_NAMES.CHIKEN_FILLET, quantity: 600 },
+            { ingredientName: INGREDIENT_NAMES.SOY_SAUCE, quantity: 100 },
+            { ingredientName: INGREDIENT_NAMES.HONEY, quantity: 10 },
+            { ingredientName: INGREDIENT_NAMES.PICKLED_GINGER, quantity: 10 },
+            { ingredientName: INGREDIENT_NAMES.OLIVE_OIL, quantity: 20 },
+        ],
+    },
+    {
+        name: RECIPE_NAMES.CHICKEN_IN_SOUR_CREAM_SAUCE,
+        ingredients: [
+            {
+                ingredientName: INGREDIENT_NAMES.CHIKEN_FILLET,
+                quantity: 550,
+            },
+            {
+                ingredientName: INGREDIENT_NAMES.SOUR_CREAM,
+                quantity: 250,
+            },
+            {
+                ingredientName: INGREDIENT_NAMES.BUTTER,
+                quantity: 30,
+            },
+            {
+                ingredientName: INGREDIENT_NAMES.FETA_CHEESE,
+                quantity: 50,
+            },
+            {
+                ingredientName: INGREDIENT_NAMES.FLOUR,
+                quantity: 15,
+            },
+            {
+                ingredientName: INGREDIENT_NAMES.GARLIC,
+                quantity: 2,
+            },
         ],
     },
 ]

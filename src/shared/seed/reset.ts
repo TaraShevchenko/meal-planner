@@ -12,6 +12,7 @@ async function resetDatabase() {
         // Удаление связей
         await prisma.mealToRecipe.deleteMany({})
         await prisma.mealToIngredients.deleteMany({})
+        await prisma.mealToUnplannedMeal.deleteMany({})
         await prisma.recipeToIngredients.deleteMany({})
 
         await prisma.meal.deleteMany({})
@@ -22,6 +23,9 @@ async function resetDatabase() {
 
         await prisma.ingredients.deleteMany({})
         console.log('Удалены все ингредиенты')
+
+        await prisma.unplannedMeal.deleteMany({})
+        console.log('Удалены все внеплановые блюда')
 
         console.log('Очистка базы данных завершена успешно!')
     } catch (error) {
