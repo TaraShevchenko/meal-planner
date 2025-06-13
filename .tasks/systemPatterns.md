@@ -27,13 +27,20 @@
 
 ## Слоевая архитектура
 
+> **Статус рефакторинга серверного слоя:** ✅ ЗАВЕРШЕН (2024-12-19)  
+> - Миграция всех API компонентов в `src/shared/api/`
+> - Централизация серверной логики в едином месте
+> - Архивирование плана рефакторинга в `.tasks/archive/`
+
 ### App Layer (Приложение)
 
 ```
 /src/app/
 ├── (auth)/          # Группа маршрутов аутентификации
 ├── (dashboard)/     # Основное приложение
-├── api/             # API маршруты
+├── api/             # Next.js API роуты
+│   ├── auth/        # NextAuth.js роуты
+│   └── trpc/        # tRPC HTTP обработчики
 ├── globals.css      # Глобальные стили
 ├── layout.tsx       # Корневой layout
 └── page.tsx         # Главная страница
@@ -61,16 +68,20 @@
 └── shopping-list/   # Список покупок
 ```
 
-### Module Layer (Модули - обьедененные feature и enteties)
+### Module Layer (Модули - объединенные feature и entities)
 
 ```
-/src/module/
+/src/modules/
 ├── user/            # Пользователь
+│   └── api/         # router.ts (мигрировано из server/)
 ├── meal/            # Прием пищи
 ├── recipe/          # Рецепт
+│   └── api/         # router.ts (мигрировано из server/)
 ├── ingredient/      # Ингредиент
+│   └── api/         # router.ts (мигрировано из server/)
 ├── nutrition/       # Пищевая ценность
 └── family/          # Семья
+    └── api/         # router.ts (мигрировано из server/)
 ```
 
 ### Shared Layer (Общее)
@@ -79,7 +90,13 @@
 /src/shared/
 ├── ui/              # shadcn/ui компоненты
 ├── lib/             # Утилиты и хелперы
-├── api/             # tRPC клиент
+├── api/             # Серверная логика (мигрировано из server/)
+│   ├── auth.ts      # NextAuth конфигурация
+│   ├── client.tsx   # tRPC клиент
+│   ├── db.ts        # Prisma подключение
+│   ├── root.ts      # Главный tRPC роутер (импортировать роутеры нужно напрямую из файла роутера а не из public api)
+│   ├── server.ts    # Серверный tRPC клиент
+│   └── trpc.ts      # tRPC конфигурация
 ├── config/          # Конфигурация
 ├── types/           # TypeScript типы
 └── constants/       # Константы
@@ -423,8 +440,23 @@ export const authOptions: NextAuthOptions = {
 - **Form State:** React Hook Form + Zod
 - **URL State:** Next.js router
 
+## История изменений архитектуры
+
+### 2024-12-19: Рефакторинг серверного слоя ✅
+- Устранен слой `src/server/` нарушающий принципы чистой архитектуры
+- Мигрированы компоненты в `app/api/` и `modules/*/api/`
+- Устранены импорты из modules в shared
+- Соблюдены принципы Evolution Design
+- Архивирован план в `.tasks/archive/server-layer-refactoring.md`
+
+### Текущие архитектурные решения
+- **Серверные компоненты:** Размещены в `app/api/`
+- **Модульные роутеры:** Изолированы в `modules/*/api/`
+- **Общие утилиты:** Остаются в `shared/`
+- **Безопасность слоев:** Строго соблюдается
+
 ---
 
-**Последнее обновление:** $(Get-Date -Format "yyyy-MM-dd")
+**Последнее обновление:** 2024-12-19
 **Архитектор:** Senior Developer
-**Статус:** Активная разработка
+**Статус:** Активная разработка - Модуль авторизации
