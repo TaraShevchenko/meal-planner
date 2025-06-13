@@ -1,1 +1,0 @@
-export { TableCaption } from './TableCaption'
