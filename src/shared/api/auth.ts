@@ -1,5 +1,6 @@
 import { auth as clerkAuth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { ensureUserExists } from "./ensure-user";
 
 /**
  * Wrapper around Clerk's auth() function for compatibility with existing code
@@ -50,4 +51,42 @@ export const requireAuth = async () => {
     redirect("/login");
   }
   return session;
+};
+
+/**
+ * Get current user from database, ensuring they exist
+ */
+export const getCurrentUserFromDB = async () => {
+  const { userId } = await clerkAuth();
+  
+  if (!userId) {
+    return null;
+  }
+
+  try {
+    const user = await ensureUserExists(userId);
+    return user;
+  } catch (error) {
+    console.error('Error getting user from database:', error);
+    return null;
+  }
+};
+
+/**
+ * Require authentication and return user from database
+ */
+export const requireAuthWithDB = async () => {
+  const { userId } = await clerkAuth();
+  
+  if (!userId) {
+    redirect("/login");
+  }
+
+  try {
+    const user = await ensureUserExists(userId);
+    return user;
+  } catch (error) {
+    console.error('Error ensuring user exists:', error);
+    redirect("/login");
+  }
 };

@@ -15,10 +15,25 @@ datasource db {
 model User {
     id        String   @id // Clerk user ID
     email     String   @unique
-    name      String?
+    firstName String?
+    lastName  String?
+    name      String?  // Computed field: firstName + lastName
     imageUrl  String?
+    username  String?  @unique
+    
+    // Clerk metadata
+    clerkCreatedAt DateTime?
+    clerkUpdatedAt DateTime?
+    
+    // App metadata
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-
+    
+    // Future relations
+    // recipes   Recipe[]
+    // mealPlans MealPlan[]
+    
     @@index([email])
+    @@index([username])
+    @@map("users")
 }

@@ -8,33 +8,9 @@ export const userRouter = createTRPCRouter({
   getCurrentUser: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.user.findUnique({
       where: { id: ctx.session.user.id },
-      include: {
-        familyMembers: {
-          include: {
-            family: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
     });
   }),
 
-  getUserWithFamilies: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.db.user.findUnique({
-      where: { id: ctx.session.user.id },
-      include: {
-        familyMembers: {
-          include: {
-            family: true,
-          },
-        },
-      },
-    });
-  }),
 
   updateProfile: protectedProcedure
     .input(

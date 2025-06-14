@@ -1,14 +1,8 @@
-import type { User as PrismaUser, FamilyMember } from '@prisma/client';
+import type { User as PrismaUser } from '@prisma/client';
 
-export type User = PrismaUser & {
-  familyMembers?: FamilyMember[];
-};
+export type User = PrismaUser;
 
-export type UserWithFamily = User & {
-  familyMembers: (FamilyMember & {
-    family: {
-      id: string;
-      name: string;
-    };
-  })[];
-};
+// TODO: Add family-related types when family functionality is implemented
+// export type UserWithFamily = User & {
+//   familyMembers: FamilyMember[];
+// };
