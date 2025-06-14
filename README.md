@@ -69,7 +69,7 @@
 - **[tRPC](https://trpc.io)** - Type-safe API без кодогенерации
 - **[Prisma](https://prisma.io)** - Современная ORM для TypeScript
 - **[PostgreSQL](https://postgresql.org)** - Надежная реляционная база данных
-- **[Supabase](https://supabase.com)** - Backend-as-a-Service платформа
+- **[Neon](https://neon.tech)** - Serverless PostgreSQL платформа
 
 ### Авторизация и безопасность
 

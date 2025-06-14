@@ -240,7 +240,7 @@ interface ProductPackaging {
 ### Текущие
 
 - **Clerk** - аутентификация и управление пользователями
-- **Supabase** - хостинг базы данных PostgreSQL
+- **Neon** - serverless PostgreSQL хостинг
 - **Vercel** - хостинг приложения
 
 ### Планируемые
