@@ -1,54 +1,53 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import NextAuth, { type DefaultSession } from "next-auth";
-import type { NextAuthConfig } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-
-import { env } from "~/shared/config/env";
-import { db } from "~/shared/api/db";
+import { auth as clerkAuth, currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 /**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
- *
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
+ * Wrapper around Clerk's auth() function for compatibility with existing code
  */
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+export const auth = async () => {
+  const { userId } = await clerkAuth();
+  const user = await currentUser();
+
+  if (!userId || !user) {
+    return null;
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
-}
-
-/**
- * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
- *
- * @see https://next-auth.js.org/configuration/options
- */
-export const authOptions: NextAuthConfig = {
-  callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
-  },
-  adapter: PrismaAdapter(db),
-  providers: [
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
+  return {
+    user: {
+      id: userId,
+      name: user.fullName || user.firstName || null,
+      email: user.emailAddresses[0]?.emailAddress || null,
+      image: user.imageUrl || null,
+    },
+  };
 };
 
-export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);
+/**
+ * Sign out function for compatibility
+ */
+export const signOut = async (options?: { redirectTo?: string }) => {
+  // Clerk handles sign out through their components
+  // This is just for compatibility with existing code
+  if (options?.redirectTo) {
+    redirect(options.redirectTo);
+  }
+};
+
+/**
+ * Get current user ID from Clerk
+ */
+export const getCurrentUserId = async (): Promise<string | null> => {
+  const { userId } = await clerkAuth();
+  return userId;
+};
+
+/**
+ * Require authentication - throws if not authenticated
+ */
+export const requireAuth = async () => {
+  const session = await auth();
+  if (!session) {
+    redirect("/login");
+  }
+  return session;
+};

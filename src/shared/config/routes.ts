@@ -7,4 +7,4 @@ export const protectedRoutes = [
   "/settings",
 ];
 
-export const publicRoutes = ["/", "/login", "/landing", "/api/auth"];
+export const publicRoutes = ["/", "/login", "/register", "/api/webhooks/clerk"];

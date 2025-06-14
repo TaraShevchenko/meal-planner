@@ -7,43 +7,41 @@ generator client {
 
 datasource db {
     provider = "postgresql"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+    // NOTE: When using postgresql with Clerk authentication
+    // User data is managed by Clerk, we only store additional app-specific data
     url      = env("DATABASE_URL")
 }
 
 // === СЕМЕЙНАЯ СИСТЕМА ===
 model Family {
-    id          String   @id @default(cuid())
-    name        String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    
-    members     FamilyMember[]
-    mealPlans   MealPlan[]
-    recipes     Recipe[]
+    id        String   @id @default(cuid())
+    name      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    members      FamilyMember[]
+    mealPlans    MealPlan[]
+    recipes      Recipe[]
     groceryLists GroceryList[]
-    
+
     @@index([name])
 }
 
 model FamilyMember {
-    id              String   @id @default(cuid())
-    familyId        String
-    userId          String
-    role            FamilyRole @default(MEMBER)
-    dailyCalories   Int?
-    dailyProteins   Float?
-    dailyFats       Float?
-    dailyCarbs      Float?
-    createdAt       DateTime @default(now())
-    
-    family          Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
-    user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    mealEntries     MealEntry[]
-    
+    id            String     @id @default(cuid())
+    familyId      String
+    userId        String
+    role          FamilyRole @default(MEMBER)
+    dailyCalories Int?
+    dailyProteins Float?
+    dailyFats     Float?
+    dailyCarbs    Float?
+    createdAt     DateTime   @default(now())
+
+    family      Family      @relation(fields: [familyId], references: [id], onDelete: Cascade)
+    user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    mealEntries MealEntry[]
+
     @@unique([familyId, userId])
     @@index([familyId])
     @@index([userId])
@@ -56,42 +54,42 @@ enum FamilyRole {
 
 // === ИНГРЕДИЕНТЫ И ПРОДУКТЫ ===
 model Ingredient {
-    id                  String   @id @default(cuid())
-    name                String
-    category            String?
-    defaultUnit         String   @default("г")
-    caloriesPer100g     Float
-    proteinsPer100g     Float
-    fatsPer100g         Float
-    carbsPer100g        Float
-    createdAt           DateTime @default(now())
-    updatedAt           DateTime @updatedAt
-    
-    recipeIngredients   RecipeIngredient[]
-    mealIngredients     MealIngredient[]
-    groceryItems        GroceryItem[]
-    
+    id              String   @id @default(cuid())
+    name            String
+    category        String?
+    defaultUnit     String   @default("г")
+    caloriesPer100g Float
+    proteinsPer100g Float
+    fatsPer100g     Float
+    carbsPer100g    Float
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    recipeIngredients RecipeIngredient[]
+    mealIngredients   MealIngredient[]
+    groceryItems      GroceryItem[]
+
     @@index([name])
     @@index([category])
 }
 
 // === РЕЦЕПТЫ ===
 model Recipe {
-    id              String   @id @default(cuid())
-    familyId        String
-    name            String
-    description     String?
-    servings        Int      @default(1)
-    cookingTime     Int?     // в минутах
-    instructions    String?
-    isQuickMeal     Boolean  @default(false)
-    createdAt       DateTime @default(now())
-    updatedAt       DateTime @updatedAt
-    
-    family          Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
-    ingredients     RecipeIngredient[]
-    mealEntries     MealEntry[]
-    
+    id           String   @id @default(cuid())
+    familyId     String
+    name         String
+    description  String?
+    servings     Int      @default(1)
+    cookingTime  Int? // в минутах
+    instructions String?
+    isQuickMeal  Boolean  @default(false)
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+
+    family      Family             @relation(fields: [familyId], references: [id], onDelete: Cascade)
+    ingredients RecipeIngredient[]
+    mealEntries MealEntry[]
+
     @@index([familyId])
     @@index([name])
     @@index([isQuickMeal])
@@ -103,39 +101,39 @@ model RecipeIngredient {
     ingredientId String
     amount       Float
     unit         String @default("г")
-    
-    recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-    ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
-    
+
+    recipe     Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+    ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
     @@unique([recipeId, ingredientId])
     @@index([recipeId])
 }
 
 // === ПЛАНИРОВАНИЕ ПИТАНИЯ ===
 model MealPlan {
-    id          String   @id @default(cuid())
-    familyId    String
-    date        DateTime @db.Date
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    
-    family      Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
-    meals       Meal[]
-    
+    id        String   @id @default(cuid())
+    familyId  String
+    date      DateTime @db.Date
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+    meals  Meal[]
+
     @@unique([familyId, date])
     @@index([familyId, date])
 }
 
 model Meal {
-    id          String   @id @default(cuid())
-    mealPlanId  String
-    type        MealType
-    name        String?
-    createdAt   DateTime @default(now())
-    
-    mealPlan    MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
-    entries     MealEntry[]
-    
+    id         String   @id @default(cuid())
+    mealPlanId String
+    type       MealType
+    name       String?
+    createdAt  DateTime @default(now())
+
+    mealPlan MealPlan    @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+    entries  MealEntry[]
+
     @@index([mealPlanId])
     @@index([type])
 }
@@ -148,20 +146,20 @@ enum MealType {
 }
 
 model MealEntry {
-    id              String   @id @default(cuid())
-    mealId          String
-    familyMemberId  String?
-    recipeId        String?
-    servings        Float    @default(1)
-    isConsumed      Boolean  @default(false)
-    consumedAt      DateTime?
-    createdAt       DateTime @default(now())
-    
-    meal            Meal         @relation(fields: [mealId], references: [id], onDelete: Cascade)
-    familyMember    FamilyMember? @relation(fields: [familyMemberId], references: [id], onDelete: SetNull)
-    recipe          Recipe?      @relation(fields: [recipeId], references: [id], onDelete: SetNull)
-    ingredients     MealIngredient[]
-    
+    id             String    @id @default(cuid())
+    mealId         String
+    familyMemberId String?
+    recipeId       String?
+    servings       Float     @default(1)
+    isConsumed     Boolean   @default(false)
+    consumedAt     DateTime?
+    createdAt      DateTime  @default(now())
+
+    meal         Meal             @relation(fields: [mealId], references: [id], onDelete: Cascade)
+    familyMember FamilyMember?    @relation(fields: [familyMemberId], references: [id], onDelete: SetNull)
+    recipe       Recipe?          @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+    ingredients  MealIngredient[]
+
     @@index([mealId])
     @@index([familyMemberId])
     @@index([isConsumed])
@@ -173,10 +171,10 @@ model MealIngredient {
     ingredientId String
     amount       Float
     unit         String @default("г")
-    
-    mealEntry    MealEntry  @relation(fields: [mealEntryId], references: [id], onDelete: Cascade)
-    ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
-    
+
+    mealEntry  MealEntry  @relation(fields: [mealEntryId], references: [id], onDelete: Cascade)
+    ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
     @@unique([mealEntryId, ingredientId])
     @@index([mealEntryId])
 }
@@ -191,30 +189,30 @@ model GroceryList {
     isCompleted Boolean  @default(false)
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
-    
-    family      Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
-    items       GroceryItem[]
-    
+
+    family Family        @relation(fields: [familyId], references: [id], onDelete: Cascade)
+    items  GroceryItem[]
+
     @@index([familyId])
     @@index([startDate, endDate])
 }
 
 model GroceryItem {
-    id              String   @id @default(cuid())
-    groceryListId   String
-    ingredientId    String
-    requiredAmount  Float
-    unit            String   @default("г")
-    packageSize     Float?
-    packageUnit     String?
-    estimatedPrice  Float?
-    category        GroceryCategory @default(BUY)
-    isPurchased     Boolean  @default(false)
-    purchasedAt     DateTime?
-    
-    groceryList     GroceryList @relation(fields: [groceryListId], references: [id], onDelete: Cascade)
-    ingredient      Ingredient  @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
-    
+    id             String          @id @default(cuid())
+    groceryListId  String
+    ingredientId   String
+    requiredAmount Float
+    unit           String          @default("г")
+    packageSize    Float?
+    packageUnit    String?
+    estimatedPrice Float?
+    category       GroceryCategory @default(BUY)
+    isPurchased    Boolean         @default(false)
+    purchasedAt    DateTime?
+
+    groceryList GroceryList @relation(fields: [groceryListId], references: [id], onDelete: Cascade)
+    ingredient  Ingredient  @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
     @@unique([groceryListId, ingredientId])
     @@index([groceryListId])
     @@index([category])
@@ -225,49 +223,15 @@ enum GroceryCategory {
     CHECK_AVAILABILITY
 }
 
-// Necessary for Next auth
-model Account {
-    id                       String  @id @default(cuid())
-    userId                   String
-    type                     String
-    provider                 String
-    providerAccountId        String
-    refresh_token            String? // @db.Text
-    access_token             String? // @db.Text
-    expires_at               Int?
-    token_type               String?
-    scope                    String?
-    id_token                 String? // @db.Text
-    session_state            String?
-    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    refresh_token_expires_in Int?
-
-    @@unique([provider, providerAccountId])
-}
-
-model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    id        String   @id // Clerk user ID
+    email     String   @unique
+    name      String?
+    imageUrl  String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     familyMembers FamilyMember[]
-}
 
-model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
-
-    @@unique([identifier, token])
+    @@index([email])
 }
