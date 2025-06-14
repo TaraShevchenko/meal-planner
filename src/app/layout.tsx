@@ -7,7 +7,7 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
-} from '@clerk/nextjs'
+} from "@clerk/nextjs";
 
 import { TRPCReactProvider } from "~/shared/api/client";
 import "~/shared/styles/globals.css";
@@ -27,10 +27,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider afterSignOutUrl="/login">
       <html lang="en" className={`${geist.variable}`}>
-        <body>
-        <header className="flex justify-end items-center p-4 gap-4 h-16">
+        <body className="flex min-h-screen flex-col">
+          <header className="flex h-16 items-center justify-end gap-4 p-4">
             <SignedOut>
               <SignInButton />
               <SignUpButton />
