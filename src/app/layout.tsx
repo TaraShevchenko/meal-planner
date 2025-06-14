@@ -8,7 +8,9 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 
+import { Button } from "~/shared/ui/button";
 import { TRPCReactProvider } from "~/shared/api/client";
 import "~/shared/styles/globals.css";
 
@@ -27,13 +29,22 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider afterSignOutUrl="/login">
-      <html lang="en" className={`${geist.variable}`}>
+    <ClerkProvider
+      afterSignOutUrl="/login"
+      appearance={{
+        baseTheme: dark,
+      }}
+    >
+      <html lang="en" className={`dark ${geist.variable}`}>
         <body className="flex min-h-screen flex-col">
-          <header className="flex h-16 items-center justify-end gap-4 p-4">
+          <header className="flex h-16 items-center justify-end gap-2 p-4">
             <SignedOut>
-              <SignInButton />
-              <SignUpButton />
+              <Button variant={"outline"} asChild>
+                <SignInButton />
+              </Button>
+              <Button asChild>
+                <SignUpButton />
+              </Button>
             </SignedOut>
             <SignedIn>
               <UserButton />
