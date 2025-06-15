@@ -126,7 +126,6 @@ model Meal {
     description  String?
     instructions String?
 
-    // Функционал выходного веса (из yield-functionality-recommendations.md)
     expectedYield Float? // ожидаемый выход в граммах
     actualYield   Float? // фактический выход в граммах
 
