@@ -1,1 +1,0 @@
-export { SelectTrigger } from './SelectTrigger'

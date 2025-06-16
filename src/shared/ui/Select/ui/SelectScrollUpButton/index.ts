@@ -1,1 +1,0 @@
-export { SelectScrollUpButton } from './SelectScrollUpButton'

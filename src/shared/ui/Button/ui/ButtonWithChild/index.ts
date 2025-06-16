@@ -1,1 +1,0 @@
-export { ButtonWithChild } from './ButtonWithChild'

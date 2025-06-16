@@ -1,1 +1,0 @@
-export { PaginationRowsInfo } from './PaginationRowsInfo'

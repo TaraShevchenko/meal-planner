@@ -1,1 +1,0 @@
-export { MealTotals } from './MealTotals'
