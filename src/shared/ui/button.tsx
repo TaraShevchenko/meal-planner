@@ -27,6 +27,15 @@ const buttonVariants = cva(
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9",
       },
+      activeByVariant: {
+        default: "pointer-events-none bg-primary/90",
+        destructive: "pointer-events-none bg-destructive/90",
+        outline: "pointer-events-none bg-accent text-accent-foreground",
+        secondary: "pointer-events-none bg-secondary/80",
+        ghost:
+          "pointer-events-none bg-accent text-accent-foreground dark:bg-accent/50",
+        link: "pointer-events-none underline",
+      },
     },
     defaultVariants: {
       variant: "default",
@@ -38,19 +47,23 @@ const buttonVariants = cva(
 function Button({
   className,
   variant,
+  isActive,
   size,
   asChild = false,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    isActive?: boolean;
   }) {
   const Comp = asChild ? Slot : "button";
-
+  const activeByVariant = isActive ? variant : undefined;
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(
+        buttonVariants({ variant, size, activeByVariant, className }),
+      )}
       {...props}
     />
   );

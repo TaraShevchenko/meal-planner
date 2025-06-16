@@ -1,1 +1,0 @@
-export { userClientQueries } from './api/client-queries';

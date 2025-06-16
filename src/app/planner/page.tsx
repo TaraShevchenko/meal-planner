@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Dashboard",
+  title: "Planner",
 };
 
-export default async function HomePage() {
+export default function PlannerPage() {
   return (
     <div className="flex flex-1 items-center justify-center gap-2">
-      Dashboard is under development 🔧
+      Planner is under development 🔧
     </div>
   );
 }
