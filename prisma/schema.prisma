@@ -87,8 +87,8 @@ model FamilyMember {
 // ============================================================================
 
 model Ingredient {
-    id     String @id @default(cuid())
-    userId String
+    id     String  @id @default(cuid())
+    userId String?
     name   String
 
     // Пищевая ценность на 100г
@@ -104,7 +104,7 @@ model Ingredient {
     updatedAt DateTime @updatedAt
 
     // Связи
-    user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user                 User?                 @relation(fields: [userId], references: [id], onDelete: Cascade)
     mealIngredients      MealIngredient[]
     mealEntryIngredients MealEntryIngredient[]
     portionHistory       PortionHistory[]
@@ -121,8 +121,8 @@ model Ingredient {
 
 model Meal {
     id           String  @id @default(cuid())
-    userId       String
     name         String
+    userId       String?
     description  String?
     instructions String?
 
@@ -137,7 +137,7 @@ model Meal {
     updatedAt DateTime @updatedAt
 
     // Связи
-    user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user            User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
     mealIngredients MealIngredient[]
     mealEntryMeals  MealEntryMeal[]
     portionHistory  PortionHistory[]
@@ -171,8 +171,8 @@ model MealIngredient {
 
 model QuickMeal {
     id          String  @id @default(cuid())
-    userId      String
     name        String
+    userId      String?
     description String?
 
     // Пищевая ценность на 100г (рассчитывается или вводится вручную)
@@ -186,7 +186,7 @@ model QuickMeal {
     updatedAt DateTime @updatedAt
 
     // Связи
-    user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user                User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
     mealEntryQuickMeals MealEntryQuickMeal[]
     portionHistory      PortionHistory[]
 

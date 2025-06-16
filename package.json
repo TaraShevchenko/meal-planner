@@ -6,9 +6,8 @@
   "scripts": {
     "build": "next build",
     "check": "next lint && tsc --noEmit",
-    "db:studio": "prisma studio",
-    "db:generate": "prisma migrate dev",
     "db:push": "prisma db push",
+    "db:generate": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
     "db:seed:users": "tsx src/shared/seed/users/seed.ts",
     "db:seed:users:clear": "tsx src/shared/seed/users/clear.ts",
