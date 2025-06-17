@@ -37,10 +37,7 @@
 src/
 ├── app/
 │   └── planner/
-│       ├── page.tsx                 # Главная страница планера
-│       └── components/
-│           ├── MainColumn.tsx       # Основная колонка
-│           └── SideColumn.tsx       # Боковая колонка
+│       └── page.tsx                 # Главная страница планера
 ├── modules/
 │   ├── ingredient/
 │   │   ├── ui/

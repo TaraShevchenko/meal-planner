@@ -24,9 +24,13 @@ async function clearUsersFromDatabase() {
     console.log("🗑️ Удаляем всех пользователей из PostgreSQL...");
     const deleteResult = await prisma.user.deleteMany({});
 
-    console.log(`✅ Успешно удалено ${deleteResult.count} пользователей из базы данных`);
+    console.log(
+      `✅ Успешно удалено ${deleteResult.count} пользователей из базы данных`,
+    );
     console.log("ℹ️ Пользователи в Clerk остались нетронутыми");
-    console.log("💡 Для восстановления данных запустите: npm run db:seed:users");
+    console.log(
+      "💡 Для восстановления данных запустите: npm run db:seed:users",
+    );
 
     return { deleted: deleteResult.count };
   } catch (error) {
@@ -43,12 +47,11 @@ async function clearUsersFromDatabase() {
 async function main() {
   try {
     console.log("🚀 Запуск очистки пользователей из локальной базы данных...");
-    
+
     const result = await clearUsersFromDatabase();
-    
+
     console.log("\n🎉 Очистка завершена успешно!");
     console.log(`📊 Удалено пользователей: ${result.deleted}`);
-    
   } catch (error) {
     console.error("💥 Критическая ошибка:", error);
     process.exit(1);
@@ -56,10 +59,9 @@ async function main() {
 }
 
 // Запускаем очистку если файл запущен напрямую
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
 
 export { clearUsersFromDatabase };

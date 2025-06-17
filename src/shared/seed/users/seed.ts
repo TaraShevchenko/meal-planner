@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { createClerkClient } from "@clerk/backend";
-import { env } from "~/shared/config/env.js";
+import { PrismaClient } from "@prisma/client";
+import { env } from "@/shared/config/env.js";
 
 const prisma = new PrismaClient();
 const clerkClient = createClerkClient({ secretKey: env.CLERK_SECRET_KEY });

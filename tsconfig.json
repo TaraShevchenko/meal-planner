@@ -27,7 +27,10 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/widget/*": ["./src/widget/*"],
+      "@/module/*": ["./src/module/*"],
+      "@/shared/*": ["./src/shared/*"]
     }
   },
   "include": [

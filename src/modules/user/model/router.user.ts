@@ -1,8 +1,5 @@
-import { z } from 'zod';
-import {
-  createTRPCRouter,
-  protectedProcedure,
-} from '~/shared/api/trpc';
+import { z } from "zod";
+import { createTRPCRouter, protectedProcedure } from "@/shared/api/trpc";
 
 export const userRouter = createTRPCRouter({
   getCurrentUser: protectedProcedure.query(async ({ ctx }) => {
@@ -11,12 +8,11 @@ export const userRouter = createTRPCRouter({
     });
   }),
 
-
   updateProfile: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1).optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       return ctx.db.user.update({

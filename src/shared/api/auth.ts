@@ -1,5 +1,5 @@
-import { auth as clerkAuth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { auth as clerkAuth, currentUser } from "@clerk/nextjs/server";
 import { ensureUserExists } from "./ensure-user";
 
 /**
@@ -58,7 +58,7 @@ export const requireAuth = async () => {
  */
 export const getCurrentUserFromDB = async () => {
   const { userId } = await clerkAuth();
-  
+
   if (!userId) {
     return null;
   }
@@ -67,7 +67,7 @@ export const getCurrentUserFromDB = async () => {
     const user = await ensureUserExists(userId);
     return user;
   } catch (error) {
-    console.error('Error getting user from database:', error);
+    console.error("Error getting user from database:", error);
     return null;
   }
 };
@@ -77,7 +77,7 @@ export const getCurrentUserFromDB = async () => {
  */
 export const requireAuthWithDB = async () => {
   const { userId } = await clerkAuth();
-  
+
   if (!userId) {
     redirect("/login");
   }
@@ -86,7 +86,7 @@ export const requireAuthWithDB = async () => {
     const user = await ensureUserExists(userId);
     return user;
   } catch (error) {
-    console.error('Error ensuring user exists:', error);
+    console.error("Error ensuring user exists:", error);
     redirect("/login");
   }
 };

@@ -1,6 +1,5 @@
-import { INGREDIENT_NAMES } from "./Ingredients.data";
-
 import { Prisma } from "@prisma/client";
+import { INGREDIENT_NAMES } from "./Ingredients.data";
 
 type MealIngredient = {
   ingredientName: string;

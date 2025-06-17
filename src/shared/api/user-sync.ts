@@ -1,5 +1,5 @@
-import { type User } from "@prisma/client";
 import { type UserJSON, type DeletedObjectJSON } from "@clerk/nextjs/server";
+import { type User } from "@prisma/client";
 import { db } from "./db";
 
 interface ClerkEmailAddress {

@@ -1,3 +1,5 @@
+import { type Metadata } from "next";
+import { Geist } from "next/font/google";
 import {
   ClerkProvider,
   SignInButton,
@@ -7,13 +9,10 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
-import { type Metadata } from "next";
-import { Geist } from "next/font/google";
-
-import { TRPCReactProvider } from "~/shared/api/client";
-import "~/shared/styles/globals.css";
-import { Button } from "~/shared/ui/button";
-import { Navigation } from "~/shared/ui/navigation";
+import { TRPCReactProvider } from "@/shared/api/client";
+import "@/shared/styles/globals.css";
+import { Button } from "@/shared/ui/button";
+import { Navigation } from "@/shared/ui/navigation";
 
 export const metadata: Metadata = {
   title: "Meal planner",
